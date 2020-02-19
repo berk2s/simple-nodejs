@@ -4,6 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+//config
+const {API_KEY, PANEL_API_KEY} = require('./constants/config');
+
+
 //routers
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -14,12 +18,15 @@ const apikeyMiddleware = require('./middleware/apikeymid')
 
 var app = express();
 
+const cors = require('cors');
+app.use(cors());
+
 // mongoose connection
 const mongoose = require('./helper/db')();
 
 //api key
-const {API_KEY} = require('./constants/config');
 app.set('API_KEY', API_KEY);
+app.set('PANEL_API_KEY', PANEL_API_KEY);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,7 +39,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', apikeyMiddleware, indexRouter);
-app.use('/api/category', categoryRouter);
+app.use('/api/p/category',  categoryRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

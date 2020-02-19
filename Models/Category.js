@@ -8,6 +8,13 @@ const CategoryModel = new Schema({
     },
     category_image:{
         type:String
+    },
+    branch_id:{
+        type:Number
+    },
+    status:{
+        type:Boolean,
+        default:true
     }
 });
 

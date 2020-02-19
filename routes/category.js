@@ -4,21 +4,90 @@ const router = express.Router();
 // relevant model
 const Category = require('../Models/Category');
 
-router.get('/', async (req, res, next) => {
+//config
+const {PANEL_URL} = require('../constants/config');
+
+//cors
+var cors = require("cors");
+
+var corsOptions = {
+    origin: PANEL_URL,
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+
+router.get('/', cors(corsOptions), async (req, res, next) => {
     try{
         const categories = await Category.find({});
-        res.json(categories);
+        res.json({
+            data: categories,
+            status: {
+                state: true,
+                code: 'FC_1'
+            }
+        });
     }catch(e){
-        console.log(e);
+        res.json({
+            data: e,
+            status: {
+                state: true,
+                code: 'FC_0'
+            }
+        });
+    }
+});
+
+router.get('/get/:category_id', cors(corsOptions), async (req, res, next) => {
+    const {category_id} = req.params;
+    try{
+        const category = await Category.findById(category_id);
+        res.json({
+            data: category,
+            status: {
+                state: true,
+                code: 'FC_1'
+            }
+        });
+    }catch(e){
+        console.log({
+            data: e,
+            status: {
+                state: true,
+                code: 'FC_0'
+            }
+        });
+    }
+});
+
+router.get('/:branch_id', cors(corsOptions), async (req, res, next) => {
+    const {branch_id} = req.params;
+    try{
+        const categories = await Category.find({branch_id});
+        res.json({
+            data: categories,
+            status: {
+                state: true,
+                code: 'FBC_1'
+            }
+        });
+    }catch(e){
+        res.json({
+            data: categories,
+            status: {
+                state: false,
+                code: 'FBC_0'
+            }
+        });
     }
 });
 
 router.post('/', async (req, res, next) => {
-    const {category_name, category_image} = req.body;
+    const {category_name, category_image, branch_id} = req.body;
     try{
         const category = new Category({
            category_name,
-           category_image
+           category_image,
+           branch_id
         });
         const category_ = await category.save();
         res.json({
@@ -29,6 +98,32 @@ router.post('/', async (req, res, next) => {
             }
         });
     }catch(e){
+        console.log(e)
+    }
+});
+
+router.put('/edit', cors(corsOptions), async (req, res, next) => {
+    const {category_id, category_name, status} = req.body;
+    try{
+        const update = await Category.findByIdAndUpdate(category_id, {
+            category_name: category_name,
+            status: status
+        });
+        res.json({
+            data: update,
+            status: {
+                state: true,
+                code: 'UC_1'
+            }
+        });
+    }catch(e){
+        res.json({
+            data: e,
+            status: {
+                state: false,
+                code: 'UC_0'
+            }
+        });
         console.log(e)
     }
 });
