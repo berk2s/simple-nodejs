@@ -7,7 +7,8 @@ const CategoryModel = new Schema({
         type:String
     },
     category_image:{
-        type:String
+        type:String,
+        default:null
     },
     branch_id:{
         type:Number
