@@ -6,8 +6,9 @@ const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
 
 const BrandModel = new Schema({
     brand_id: mongoose.Types.ObjectId,
-    category_id: mongoose.Types.ObjectId,
-    branch_id: mongoose.Types.ObjectId,
+    branch_id: {
+        type:Number
+    },
     brand_name: {
         type: String
     },
