@@ -15,5 +15,175 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+router.get('/', async(req, res, next) => {
+   try{
+
+   }catch(e){
+       res.json(e);
+   }
+});
+
+router.get('/:branch_id', async(req, res, next) => {
+    try{
+        const {branch_id} = req.params;
+        const products = await Product.aggregate([
+            {
+                $match:{
+                    branch_id: parseInt(branch_id)
+                }
+            },
+            {
+                $lookup:{
+                    from:'categories',
+                    foreignField:'_id',
+                    localField:'category_id',
+                    as:'category'
+                }
+            },
+            {
+                $lookup:{
+                    from:'brands',
+                    foreignField:'_id',
+                    localField:'brand_id',
+                    as:'brand'
+                }
+            },
+            {
+                $unwind:{
+                    path:'$category',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $unwind:{
+                    path:'$brand',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $sort:{
+                    _id:-1,
+                }
+            }
+        ]);
+
+        res.json({
+            data: products,
+            status: {
+                state: true,
+                code: 'FP_1'
+            }
+        });
+    }catch(e){
+        res.json(e);
+    }
+});
+
+router.post('/', cors(corsOptions), async (req, res, next) => {
+
+   try{
+       const {product_image, product_amonut, product_unit_weight, product_unit_type, branch_id, category_id, brand_id, product_name, product_list_price, product_discount_price, product_discount} = req.body;
+       const product = new Product({
+           branch_id:branch_id,
+           category_id:category_id,
+           brand_id:brand_id,
+           product_name:product_name,
+           product_list_price:product_list_price,
+           product_discount_price:product_discount_price,
+           product_discount:product_discount,
+           product_unit_type:product_unit_type,
+           product_unit_weight:product_unit_weight,
+           product_amonut:product_amonut,
+           product_image:product_image
+       });
+       const res_ = await product.save();
+       res.json({
+           data: res_,
+           status: {
+               state: true,
+               code: 'CP_1'
+           }
+       });
+   }catch(e){
+       console.log(e)
+   }
+});
+
+router.put('/edit/status', cors(corsOptions), async(req, res, next) => {
+   try{
+       const {product_id, status} = req.body;
+       const updateProduct = await Product.findByIdAndUpdate(product_id, {
+           product_status: status
+       });
+       res.json({
+           data: updateProduct,
+           status: {
+               state: true,
+               code: 'UP_1'
+           }
+       });
+   }catch(e){
+       res.json(e);
+   }
+});
+
+router.put('/edit/discount', cors(corsOptions), async(req, res, next) => {
+   try{
+       const {product_id, product_list_price, product_discount_price, product_discount} = req.body;
+       const discountUpdate = await Product.findByIdAndUpdate(product_id, {
+           product_list_price:product_list_price,
+           product_discount_price:product_discount_price,
+           product_discount: product_discount
+       });
+       res.json({
+           data: discountUpdate,
+           status: {
+               state: true,
+               code: 'UD_1'
+           }
+       });
+   }catch(e){
+       res.json(e);
+   }
+});
+
+router.put('/edit', cors(corsOptions), async(req, res, next) => {
+   try{
+       const {product_id, product_name, category_id, brand_id, product_unit_type, product_unit_weight,product_amonut} = req.body;
+       const update = await Product.findByIdAndUpdate(product_id, {
+           product_name:product_name,
+           category_id: category_id,
+           brand_id: brand_id,
+           product_unit_type: product_unit_type,
+           product_unit_weight: parseInt(product_unit_weight),
+           product_amonut: parseInt(product_amonut)
+       });
+       res.json({
+           data: update,
+           status: {
+               state: true,
+               code: 'UD_1'
+           }
+       });
+   }catch(e){
+       res.json(e);
+   }
+});
+
+router.delete('/:product_id', cors(corsOptions), async (req, res, next) => {
+   try{
+       const {product_id} = req.params;
+       const deleteProduct = await Product.findByIdAndDelete(product_id);
+       res.json({
+           data: deleteProduct,
+           status: {
+               state: true,
+               code: 'DP_1'
+           }
+       });
+   }catch(e){
+       res.json(e);
+   }
+});
 
 module.exports = router;

@@ -1,14 +1,17 @@
 const mongoose = require('mongoose');
+require('mongoose-double')(mongoose);
+
 const Schema = mongoose.Schema;
 
 const moment = require('moment-timezone');
 const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
 
+var SchemaTypes = mongoose.Schema.Types;
+
 const ProductModel = new Schema({
-    product_id: mongoose.Types.ObjectId,
     category_id: mongoose.Types.ObjectId,
-    branch_id: mongoose.Types.ObjectId,
-    product_brand: mongoose.Types.ObjectId,
+    branch_id: Number,
+    brand_id: mongoose.Types.ObjectId,
     product_name: {
         type:String,
     },
@@ -16,24 +19,28 @@ const ProductModel = new Schema({
         type:String,
     },
     product_discount:{
-        type:Number,
+        type:SchemaTypes.Double,
         default:null
     },
     product_unit_weight:{
-        type:Number
+        type:SchemaTypes.Double,
     },
     product_unit_type:{
         type:String
     },
     product_list_price:{
-        type:Number,
+        type:SchemaTypes.Double,
     },
-    product_old_price:{
-        type:Number,
+    product_discount_price:{
+        type:SchemaTypes.Double,
         default:null,
     },
     product_amonut:{
-        type:Number
+        type:SchemaTypes.Double,
+    },
+    product_status:{
+        type:Boolean,
+        default:true
     },
     product_date:{
         type:Date,
