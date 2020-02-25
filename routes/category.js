@@ -103,7 +103,6 @@ router.get('/current/:branch_id', async (req, res, next) => {
     }
 });
 
-
 router.post('/', async (req, res, next) => {
     const {category_name, category_image, branch_id} = req.body;
     try{

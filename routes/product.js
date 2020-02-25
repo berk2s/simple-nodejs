@@ -23,7 +23,7 @@ router.get('/', async(req, res, next) => {
    }
 });
 
-router.get('/:branch_id', async(req, res, next) => {
+router.get('/:branch_id', cors(corsOptions), async(req, res, next) => {
     try{
         const {branch_id} = req.params;
         const products = await Product.aggregate([
@@ -77,6 +77,22 @@ router.get('/:branch_id', async(req, res, next) => {
     }catch(e){
         res.json(e);
     }
+});
+
+router.get('/get/:branch_id/:category_id', async(req, res, next) => {
+   try{
+       const {branch_id, category_id} = req.params;
+       const datas = await Product.find({branch_id: branch_id, category_id: category_id});
+       res.json({
+           data: datas,
+           status: {
+               state: true,
+               code: 'FP_1'
+           }
+       });
+   }catch(e){
+       res.json(e);
+   }
 });
 
 router.post('/', cors(corsOptions), async (req, res, next) => {
