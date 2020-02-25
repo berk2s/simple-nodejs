@@ -59,7 +59,7 @@ router.get('/p/get/:category_id', cors(corsOptions), async (req, res, next) => {
     }
 });
 
-router.get('/:branch_id', async (req, res, next) => {
+router.get('/:branch_id', cors(corsOptions), async (req, res, next) => {
     const {branch_id} = req.params;
     try{
         const categories = await Category.find({branch_id});
@@ -80,6 +80,29 @@ router.get('/:branch_id', async (req, res, next) => {
         });
     }
 });
+
+router.get('/current/:branch_id', async (req, res, next) => {
+    const {branch_id} = req.params;
+    try{
+        const categories = await Category.find({branch_id: branch_id, status:true});
+        res.json({
+            data: categories,
+            status: {
+                state: true,
+                code: 'FBC_1'
+            }
+        });
+    }catch(e){
+        res.json({
+            data: categories,
+            status: {
+                state: false,
+                code: 'FBC_0'
+            }
+        });
+    }
+});
+
 
 router.post('/', async (req, res, next) => {
     const {category_name, category_image, branch_id} = req.body;

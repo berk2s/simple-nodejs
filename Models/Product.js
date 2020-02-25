@@ -22,6 +22,10 @@ const ProductModel = new Schema({
         type:SchemaTypes.Double,
         default:null
     },
+    product_discount_price:{
+        type:SchemaTypes.Double,
+        default:null,
+    },
     product_unit_weight:{
         type:SchemaTypes.Double,
     },
@@ -31,10 +35,7 @@ const ProductModel = new Schema({
     product_list_price:{
         type:SchemaTypes.Double,
     },
-    product_discount_price:{
-        type:SchemaTypes.Double,
-        default:null,
-    },
+
     product_amonut:{
         type:SchemaTypes.Double,
     },

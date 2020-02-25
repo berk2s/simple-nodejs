@@ -170,6 +170,24 @@ router.put('/edit', cors(corsOptions), async(req, res, next) => {
    }
 });
 
+router.put('/edit/image', cors(corsOptions), async(req, res, next) => {
+   try{
+       const {imagename, product_id} = req.body;
+       const image = await Product.findByIdAndUpdate(product_id, {
+           product_image: imagename
+       });
+       res.json({
+           data: image,
+           status: {
+               state: true,
+               code: 'UD_1'
+           }
+       });
+   }catch(e){
+       res.json(e);
+   }
+});
+
 router.delete('/:product_id', cors(corsOptions), async (req, res, next) => {
    try{
        const {product_id} = req.params;
