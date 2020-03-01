@@ -44,6 +44,7 @@ app.use('/', apikeyMiddleware, indexRouter);
 app.use('/api/category',  categoryRouter);
 app.use('/api/brand',  brandRouter);
 app.use('/api/product',  productRouter);
+app.use('/api/user',  usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

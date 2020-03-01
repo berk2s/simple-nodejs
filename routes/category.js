@@ -94,7 +94,7 @@ router.get('/current/:branch_id', async (req, res, next) => {
         });
     }catch(e){
         res.json({
-            data: categories,
+            data: e,
             status: {
                 state: false,
                 code: 'FBC_0'
