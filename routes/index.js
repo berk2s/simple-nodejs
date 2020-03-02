@@ -1,9 +1,146 @@
 var express = require('express');
 var router = express.Router();
 
+// jwt
+const jwt = require('jsonwebtoken');
+
+// bcrypt
+const bcrypt = require('bcryptjs');
+
+// relevant model
+const User = require('../Models/User');
+
+//config
+const {PANEL_URL} = require('../constants/config');
+
+//cors
+var cors = require("cors");
+
+var corsOptions = {
+  origin: PANEL_URL,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Expressasd' });
 });
+
+router.post('/register', async (req, res, next) => {
+  try{
+    const {name_surname, email_address, phone_number, password, which_platform} = req.body;
+    const userCheck = await User.findOne({$or: [{email_address: email_address}, {phone_number: phone_number}]});
+
+    if(userCheck){
+      let whichOne = null;
+
+      if(userCheck.email_address == email_address && userCheck.phone_number == phone_number)
+        whichOne = 'both';
+      else if(userCheck.email_address == email_address)
+        whichOne = 'email';
+      else
+        whichOne = 'phone';
+
+      res.json({
+        message:'Böyle bir kullanıcı mevcut!',
+        status:{
+          state:false,
+          code:'R0',
+          whichOne
+        }
+      })
+
+    }else {
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(password, salt, async (err, hash) => {
+          const user = await new User({
+            name_surname: name_surname,
+            email_address: email_address,
+            phone_number: phone_number,
+            which_platform: which_platform,
+            password: hash,
+          });
+          try {
+            const data = await user.save();
+            res.json({
+              message: 'Üye başarılı şekilde eklendi!',
+              status: {
+                state: true,
+                code: 'R1',
+                user_id: data._id
+              }
+            });
+          } catch (e) {
+            res.json(e);
+          }
+        });
+      });
+    }
+
+  }catch(e){
+    res.json(e);
+  }
+})
+
+router.post('/authenticate', async (req, res, next) => {
+  const { phone_number, password } = req.body;
+
+  const promise = User.findOne({phone_number});
+
+  promise
+      .then((user) => {
+
+        if(!user){
+
+          res.json({
+            message:'Geçersiz telefon numarasi',
+            status:{
+              state:false,
+              code:'A0'
+            }
+          })
+          return false;
+        }
+
+        bcrypt.compare(password, user.password)
+            .then((result) => {
+              if(!result){
+
+                res.json({
+                  message:'Geçersiz şifre',
+                  status:{
+                    state:false,
+                    code:'A1'
+                  }
+                })
+                return false;
+              }
+
+              const payload = {phone_number};
+
+              const token = jwt.sign(payload, req.app.get('API_KEY'), {
+                expiresIn: '365d'
+              });
+
+
+              res.json({
+                message:'successful!',
+                status:{
+                  state:true,
+                  code:'A2',
+                  token,
+                  user_id: user._id,
+                  name_surname: user.name_surname
+                }
+              })
+
+            })
+
+      })
+      .catch((err) => {
+        res.json(err);
+      })
+
+})
 
 module.exports = router;

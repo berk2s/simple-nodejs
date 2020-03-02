@@ -33,6 +33,14 @@ const UserModel = new Schema({
         type:Boolean,
         default:false
     },
+    permission_email:{
+        type:Boolean,
+        default:true
+    },
+    permission_sms:{
+        type:Boolean,
+        default:true
+    },
     createdAt:{
         type:Date,
         default:dateTurkey._d

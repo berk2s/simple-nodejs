@@ -25,120 +25,74 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-router.post('/', async (req, res, next) => {
+router.get('/detail/:user_id', async (req, res, next) => {
+   try{
+       const {user_id} = req.params;
+       const user = await User.findOne({_id : user_id});
+       res.json({
+           data: user,
+           status: {
+               state: true,
+               code: 'FU_1'
+           }
+       })
+   }catch{
+       res.json(e);
+   }
+});
+
+router.put('/name', async (req, res, next) => {
     try{
-      const {name_surname, email_address, phone_number, password, which_platform} = req.body;
-      const userCheck = await User.findOne({$or: [{email_address: email_address}, {phone_number: phone_number}]});
-
-      if(userCheck){
-          let whichOne = null;
-
-          if(userCheck.email_address == email_address && userCheck.phone_number == phone_number)
-              whichOne = 'both';
-          else if(userCheck.email_address == email_address)
-              whichOne = 'email';
-          else
-              whichOne = 'phone';
-
-          res.json({
-              message:'Böyle bir kullanıcı mevcut!',
-              status:{
-                  state:false,
-                  code:'R0',
-                  whichOne
-              }
-          })
-
-      }else {
-          bcrypt.genSalt(10, (err, salt) => {
-              bcrypt.hash(password, salt, async (err, hash) => {
-                  const user = await new User({
-                      name_surname: name_surname,
-                      email_address: email_address,
-                      phone_number: phone_number,
-                      which_platform: which_platform,
-                      password: hash,
-                  });
-                  try {
-                      const data = await user.save();
-                      res.json({
-                          message: 'Üye başarılı şekilde eklendi!',
-                          status: {
-                              state: true,
-                              code: 'R1',
-                              user_id: data._id
-                          }
-                      });
-                  } catch (e) {
-                      res.json(e);
-                  }
-              });
-          });
-      }
-
+        const {user_id, name_surname} = req.body;
+        const user = await User.findByIdAndUpdate(user_id, {
+            name_surname: name_surname
+        })
+        res.json({
+            data: user,
+            status: {
+                state: true,
+                code: 'UU_1'
+            }
+        })
     }catch(e){
-      res.json(e);
+        res.json(e);
     }
 })
 
-router.post('/authenticate', async (req, res, next) => {
-    const { phone_number, password } = req.body;
-
-    const promise = User.findOne({phone_number});
-
-    promise
-        .then((user) => {
-
-            if(!user){
-
-                res.json({
-                    message:'Geçersiz telefon numarasi',
-                    status:{
-                        state:false,
-                        code:'A0'
-                    }
-                })
-                return false;
+router.put('/permission/email', async (req, res, next) => {
+    try{
+        const {user_id, value} = req.body;
+        const user = await User.findByIdAndUpdate(user_id, {
+            permission_email: value
+        })
+        res.json({
+            data: user,
+            status: {
+                state: true,
+                code: 'UU_1'
             }
-
-            bcrypt.compare(password, user.password)
-                .then((result) => {
-                    if(!result){
-
-                        res.json({
-                            message:'Geçersiz şifre',
-                            status:{
-                                state:false,
-                                code:'A1'
-                            }
-                        })
-                        return false;
-                    }
-
-                    const payload = {phone_number};
-
-                    const token = jwt.sign(payload, req.app.get('API_KEY'), {
-                        expiresIn: '365d'
-                    });
-
-
-                    res.json({
-                        message:'successful!',
-                        status:{
-                            state:true,
-                            code:'A2',
-                            token,
-                            user_id: user._id
-                        }
-                    })
-
-                })
-
         })
-        .catch((err) => {
-            res.json(err);
-        })
+    }catch(e){
+        res.json(e);
+    }
+})
 
+router.put('/permission/sms', async (req, res, next) => {
+    try{
+        const {user_id, value} = req.body;
+        const user = await User.findByIdAndUpdate(user_id, {
+            permission_sms: value
+        })
+        res.json({
+            data: user,
+            status: {
+                state: true,
+                code: 'UU_1'
+            }
+        })
+    }catch(e){
+        res.json(e);
+    }
 })
 
 module.exports = router;
