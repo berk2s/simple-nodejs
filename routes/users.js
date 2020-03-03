@@ -9,6 +9,7 @@ const bcrypt = require('bcryptjs');
 
 // relevant model
 const User = require('../Models/User');
+const UserAddress = require('../Models/UserAddress');
 
 //config
 const {PANEL_URL} = require('../constants/config');
@@ -94,5 +95,21 @@ router.put('/permission/sms', async (req, res, next) => {
         res.json(e);
     }
 })
+
+router.get('/address/:user_id', async (req, res , next) => {
+    try{
+        const {user_id} = req.params
+        const address = await UserAddress.find({user_id: user_id});
+        res.json({
+            data: address,
+            status: {
+                state: true,
+                code: 'AF_1'
+            }
+        })
+    }catch(e){
+        res.json(e);
+    }
+});
 
 module.exports = router;
