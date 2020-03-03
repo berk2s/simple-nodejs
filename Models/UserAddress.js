@@ -7,13 +7,10 @@ const UserAddress = new Schema({
        type:String,
     },
     address_province:{
-       type:Number,
+       type:{},
     },
     address_county:{
-       type:Number,
-    },
-    address_district:{
-       type:Number,
+       type:{},
     },
     address:{
        type:String,

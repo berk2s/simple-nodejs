@@ -99,7 +99,7 @@ router.put('/permission/sms', async (req, res, next) => {
 router.get('/address/:user_id', async (req, res , next) => {
     try{
         const {user_id} = req.params
-        const address = await UserAddress.find({user_id: user_id});
+        const address = await UserAddress.find({user_id: user_id}).sort({_id: -1});
         res.json({
             data: address,
             status: {
@@ -111,5 +111,47 @@ router.get('/address/:user_id', async (req, res , next) => {
         res.json(e);
     }
 });
+
+router.post('/address', async (req, res ,next) => {
+    try{
+        const {user_id, address_title, address_province, address_county, address, address_direction} = req.body;
+        const addAddress = new UserAddress({
+            user_id:user_id,
+            address_title:address_title,
+            address_province:address_province,
+            address_county:address_county,
+            address:address,
+            address_direction:address_direction,
+        });
+        const save = await addAddress.save();
+        const addresies = await UserAddress.find({user_id: user_id}).sort({_id: -1});
+        res.json({
+            data: addresies,
+            status: {
+                state: true,
+                code: 'AC_1'
+            }
+        })
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.delete('/address/:user_id/:address_id', async (req, res, next) => {
+    try{
+        const {user_id, address_id} = req.params;
+        await UserAddress.findByIdAndDelete(address_id);
+        const address = await UserAddress.find({user_id: user_id}).sort({_id: -1});
+        res.json({
+            data: address,
+            status: {
+                state: true,
+                code: 'AF_1'
+            }
+        });
+    }catch(e){
+        res.json(e);
+    }
+})
 
 module.exports = router;
