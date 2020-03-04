@@ -17,6 +17,12 @@ const UserAddress = new Schema({
     },
     address_direction:{
        type:String
+    },
+    address_ltd:{
+       type:String
+    },
+    address_lng:{
+       type:String
     }
 });
 

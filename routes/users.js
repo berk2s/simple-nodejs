@@ -114,7 +114,7 @@ router.get('/address/:user_id', async (req, res , next) => {
 
 router.post('/address', async (req, res ,next) => {
     try{
-        const {user_id, address_title, address_province, address_county, address, address_direction} = req.body;
+        const {address_ltd, address_lng, user_id, address_title, address_province, address_county, address, address_direction} = req.body;
         const addAddress = new UserAddress({
             user_id:user_id,
             address_title:address_title,
@@ -122,6 +122,8 @@ router.post('/address', async (req, res ,next) => {
             address_county:address_county,
             address:address,
             address_direction:address_direction,
+            address_ltd:''+address_ltd,
+            address_lng:''+address_lng
         });
         const save = await addAddress.save();
         const addresies = await UserAddress.find({user_id: user_id}).sort({_id: -1});
@@ -144,6 +146,29 @@ router.delete('/address/:user_id/:address_id', async (req, res, next) => {
         const address = await UserAddress.find({user_id: user_id}).sort({_id: -1});
         res.json({
             data: address,
+            status: {
+                state: true,
+                code: 'AF_1'
+            }
+        });
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.put('/address' , async (req, res, next) => {
+    try{
+        const {id, user_id, address_title, address_province, address_county, address, address_direction} = req.body;
+        const update = await UserAddress.findByIdAndUpdate(id, {
+            address_title:address_title,
+            address_province:address_province,
+            address_county:address_county,
+            address:address,
+            address_direction:address_direction,
+        });
+        const addressUpdate = await UserAddress.find({user_id: user_id}).sort({_id: -1});
+        res.json({
+            data: addressUpdate,
             status: {
                 state: true,
                 code: 'AF_1'
