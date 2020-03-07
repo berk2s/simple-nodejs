@@ -14,6 +14,7 @@ var usersRouter = require('./routes/users');
 const categoryRouter = require('./routes/category');
 const brandRouter = require('./routes/brand');
 const productRouter = require('./routes/product');
+const notificationRouter = require('./routes/notification');
 
 //middlewares
 const apikeyMiddleware = require('./middleware/apikeymid')
@@ -45,6 +46,7 @@ app.use('/', apikeyMiddleware, indexRouter);
 app.use('/api/category',  categoryRouter);
 app.use('/api/brand',  brandRouter);
 app.use('/api/product',  productRouter);
+app.use('/api/notification',  notificationRouter);
 app.use('/api/user',  tokenVerifyMiddleware, usersRouter);
 
 

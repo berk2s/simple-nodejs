@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "mavideniste-ios-push",
+  "private_key_id": "41f7dc8100d8323de38ed9ff8866a93aeedb5100",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC8ESQHYKeTgOkS\n1s0mIj3TbNI8+KBceDFM5czZwbhd9sugsSAChlp5AS5ZW/XCUnFt52ON9o3sCf5v\nqdSpS5uNB4mNqe/yJLtd5qVAIW+1alYQzhisIWpKHv2JFMW/BA1zbl0HfLviNwxL\nxrlZvYuURw9RzjX6WmpJlzB5QEn53W0DcyLKDOWb0eAE8iTwQlAp7cwyg9IH0l6U\nXabip3O1LYj+HbIQ293qFCkC+tsjEzmxt3KM73DcI4LMX3bMPP1PSMSu1KVbjwy+\n6Us7+cmzjGSt6c+mNqcszDW7WIIpYGpPjCyD7f6hulFtsUk6VwxOCFlQdbgXGh7j\npxTUCBpnAgMBAAECggEAEz7Dy5d5/o+yCjH+A1l8ry6TIxckPeI01VQsztnSlpcD\nRnnptyhtiLV0u0M8VnreTatgli31XwK0zVN5RivNCrULP/p0afiVTeok3fet+Ugc\n75JPlwnCWTxroIQGKmJtR/MyxOngRilw8i4vWH4bkvxklm/+ORTYjJhSpw3LpCx1\nt0p3dpMZXeNlEf/RJabA9gs9YMsdnq+4fQ0c/8Bh3YVqM+89K/MGfRBiSIv7yJPh\nOk82KSYtjqfizZuo4jcTnFA+kr9HqKFW6TgIG8crOZz/uutHdH3g2hgvzSMyl93D\nHTriQ6/CPYp04KmpBiH1aZ0/quj+B7qyDEWIJWLWTQKBgQD86bNTS4x0rMwtz5d0\nM/tsp1oM3iu7vvB7a19qE9hl2f0b/cuZY57W5uw3U808KP2koO1cuWY7Mnm9JtxZ\nNySnOxvM4PhF1iTlLOFIr0odWobQ/E3kgOfwOFSDNO2cHfmfpGHjJwZqmLjrDauD\n6jZgH7aMdm0j+WhU8h2UGisQcwKBgQC+XM9ziVIytsQUhjTp5iykJwOc+TV36rzH\nDiKh7jDO1opjcedJjHXUX7VvI5LDlNicLWuv7oK2Z2YdJ+isGiAv7h+wQE5NAt3j\n6JG4xT8VxJAIT+hc1JlsT5A6D6otyUYxj7NX088rjBSQuOeIDhJgHt9yCN1GWfC0\nZY7BLrVVPQKBgQDfthCrUx5QbjDFLOT5Iqn5OCbNTxA8J+8sHJPvjtJRdXsP8XTQ\nn2/3A5hacEQQPOnvX3HWHSCyqDlK+T7bo41GZ2B132F81KkaFpLH6lWSlWq/HQ4B\nW4zNzeXjkUPEXjdZ4Nu9Q93HGIQpVpQqQVgLusGMiYyMz6ZbzTYgtOz2xQKBgQCd\n5mwpYLlu2Y0RnTTc4xEaZEYp+cjxHCPUVRRDD0kq+Gg4Dq4Tos/GBlF/y5kcZCW8\nfix59TQ1StU3z/e+cblLKJDeaKjKVltphWsCQZKPYsk6K9YI0kwkvGZc0suNSQvR\nZmoTqtyIOZyBYu6iO1HgqxsbAuFQTqBLcoYUFcNR3QKBgCej/XRfABZjtpycqZY2\n31jk4bfZqWdf9XS1l+BuNl0tA871TmeLSw/Uu3IYPjR/9bVTDVhdeqA/4vlok8dK\nxPyJu6P2HALezzKBcJkLopoG3XdRv10Hi/JNw8mwwS99754veZeeby4tRl7G5Dk+\n8jiEJ6btzwzhgYptQkxgMbGj\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-68hcq@mavideniste-ios-push.iam.gserviceaccount.com",
+  "client_id": "104918426681323629795",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-68hcq%40mavideniste-ios-push.iam.gserviceaccount.com"
+}
