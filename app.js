@@ -11,6 +11,7 @@ const {API_KEY, PANEL_API_KEY} = require('./constants/config');
 //routers
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var usersPRouter = require('./routes/P_users');
 const categoryRouter = require('./routes/category');
 const brandRouter = require('./routes/brand');
 const productRouter = require('./routes/product');
@@ -48,6 +49,7 @@ app.use('/api/brand',  brandRouter);
 app.use('/api/product',  productRouter);
 app.use('/api/notification',  notificationRouter);
 app.use('/api/user',  tokenVerifyMiddleware, usersRouter);
+app.use('/api/p/user',  usersPRouter);
 
 
 // catch 404 and forward to error handler

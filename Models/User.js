@@ -41,6 +41,10 @@ const UserModel = new Schema({
         type:Boolean,
         default:true
     },
+    token:{
+        type:String,
+        default:null
+    },
     createdAt:{
         type:Date,
         default:dateTurkey._d

@@ -22,8 +22,19 @@ var corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/', cors(corsOptions), async (req, res, next) => {
+  try{
+      const data = await User.find({});
+      res.json({
+          data: data,
+          status: {
+              state: true,
+              code: 'FU_1'
+          }
+      })
+  }catch(e){
+      res.json(e);
+  }
 });
 
 router.get('/detail/:user_id', async (req, res, next) => {
@@ -174,6 +185,24 @@ router.put('/address' , async (req, res, next) => {
                 code: 'AF_1'
             }
         });
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.put('/token', async (req, res, next) => {
+    try{
+        const {token, user_id} = req.body;
+        const updateUserToken = await User.findByIdAndUpdate(user_id, {
+            token:token
+        });
+        res.json({
+            data: updateUserToken,
+            status: {
+                state: true,
+                code: 'UU_1'
+            }
+        })
     }catch(e){
         res.json(e);
     }
