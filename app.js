@@ -16,6 +16,7 @@ const categoryRouter = require('./routes/category');
 const brandRouter = require('./routes/brand');
 const productRouter = require('./routes/product');
 const notificationRouter = require('./routes/notification');
+const ordersRouter = require('./routes/orders');
 
 //middlewares
 const apikeyMiddleware = require('./middleware/apikeymid')
@@ -48,6 +49,7 @@ app.use('/api/category',  categoryRouter);
 app.use('/api/brand',  brandRouter);
 app.use('/api/product',  productRouter);
 app.use('/api/notification',  notificationRouter);
+app.use('/api/orders',  ordersRouter);
 app.use('/api/user',  tokenVerifyMiddleware, usersRouter);
 app.use('/api/p/user',  usersPRouter);
 

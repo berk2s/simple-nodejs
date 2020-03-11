@@ -193,6 +193,8 @@ router.put('/address' , async (req, res, next) => {
 router.put('/token', async (req, res, next) => {
     try{
         const {token, user_id} = req.body;
+        console.log('token:', token);
+        console.log('userid:', user_id)
         const updateUserToken = await User.findByIdAndUpdate(user_id, {
             token:token
         });

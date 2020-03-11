@@ -8,6 +8,7 @@ const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
 
 var SchemaTypes = mongoose.Schema.Types;
 
+
 const ProductModel = new Schema({
     category_id: mongoose.Types.ObjectId,
     branch_id: Number,

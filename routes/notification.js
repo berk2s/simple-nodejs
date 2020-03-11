@@ -19,6 +19,8 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+const {TOPIC_EVERYBODY} = require('../constants/config')
+
 router.get('/topic', cors(corsOptions), async(req, res, next) => {
     try{
 
@@ -37,9 +39,15 @@ router.get('/topic', cors(corsOptions), async(req, res, next) => {
     }
 });
 
+router.post('/subscribe', (req, res, next) => {
+    const {group_name, group_users} = req.body;
+    console.log(group_name.trim())
+    res.json({})
+})
+
 router.post('/topic', cors(corsOptions), async (req, res, next) => {
     try{
-        const {group_name, group_desc, group_branch, group_users} = req.body;
+        const {group_name, group_desc, group_branch, group_users, tokens} = req.body;
         const newGroup = new UserGroups({
             group_name:group_name,
             group_desc:group_desc,
@@ -48,23 +56,24 @@ router.post('/topic', cors(corsOptions), async (req, res, next) => {
         });
         const saveGroup = await newGroup.save();
 
-        /*const {tokens} = req.body;
+        console.log(group_users);
 
-        FCM.subscribeToTopic(tokens, group_name, function(err, response) {
+        FCM.subscribeToTopic(group_users, saveGroup._id, function(err, response) {
             if(err){
                 console.log('error found', err);
             }else {
                 console.log('response here', response);
             }
-        })*/
+        });
 
         res.json({
-            data: saveGroup,
+            data: 'OK',
             state:{
                 status:true,
                 code:'IG_1'
             }
         });
+
     }catch(e){
         res.json(e);
     }
@@ -72,11 +81,11 @@ router.post('/topic', cors(corsOptions), async (req, res, next) => {
 
 router.post('/push',  async (req, res, next) => {
     try{
-        const {tokens, title, body} = req.body;
+        const {title, body, group} = req.body;
 
-        const tokens_ = tokens;
+        const topic = group;
 
-        const topic = '_Everybody_';
+        console.log(topic);
 
         const message = {
             data: {    //This is only optional, you can send any data
@@ -87,7 +96,7 @@ router.post('/push',  async (req, res, next) => {
                 title : title,
                 body : body
             },
-            topic:topic
+            topic:topic.trim(),
         };
 
         FCM.send(message, function(err, response) {
@@ -105,24 +114,81 @@ router.post('/push',  async (req, res, next) => {
     }
 });
 
+router.post('/push/user', async (req, res, next) => {
+    try{
+        const {title, body, token} = req.body;
+        var message = {
+            data: {    //This is only optional, you can send any data
+                score: '850',
+                time: '2:45'
+            },
+            notification:{
+                title : title,
+                body : body
+            },
+            token : token
+        };
+
+        FCM.send(message, function(err, response) {
+            if(err){
+                console.log('error found', err);
+            }else {
+                console.log('response here', response);
+            }
+        });
+
+        res.json({})
+    }catch(e){
+        res.json(e);
+    }
+})
+
 router.post('/token', async(req, res, next) => {
     try {
         const {token, platform} = req.body;
 
-        const tokenSave = new Tokens({
-            token:token,
-            platform:platform
-        });
+        const checkToken = Tokens.findOne({token:token});
 
-        const saveit = await tokenSave.save();
+        checkToken.then(isit => {
+            if(!isit){
+                FCM.unsubscribeFromTopic(token, TOPIC_EVERYBODY, function(err, response) {
+                    if(err){
+                        console.log('error found', err);
+                    }else {
+                        console.log('response here', response);
+                    }
+                });
 
-        res.json({
-            data: saveit,
-            state:{
-                status:true,
-                code:'IT_1'
+                FCM.subscribeToTopic(token, TOPIC_EVERYBODY, function(err, response) {
+                    if(err){
+                        console.log('error found', err);
+                    }else {
+                        console.log('response here', response);
+                    }
+                });
             }
-        });
+
+            return isit;
+        }).then(async data => {
+            if(!data) {
+                const tokenSave = new Tokens({
+                    token: token,
+                    platform: platform
+                });
+
+                const saveit = await tokenSave.save();
+
+
+                res.json({
+                    data: saveit,
+                    state: {
+                        status: true,
+                        code: 'IT_1'
+                    }
+                });
+            }
+        })
+
     }catch(e){
         res.json(e);
     }
