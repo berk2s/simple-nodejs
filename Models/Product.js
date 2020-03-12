@@ -15,6 +15,7 @@ const ProductModel = new Schema({
     brand_id: mongoose.Types.ObjectId,
     product_name: {
         type:String,
+        text:true
     },
     product_image:{
         type:String,

@@ -236,4 +236,26 @@ router.delete('/:product_id', cors(corsOptions), async (req, res, next) => {
    }
 });
 
+router.get('/search/:query', async (req, res, next) => {
+    try{
+        const {query} = req.params;
+        console.log(query)
+        //const result = await Product.find({$text: { $search: query, $language:'tr', $caseSensitive:false }})
+
+        const result = await Product.find(
+                { "product_name": new RegExp(query, "gi") },
+            );
+
+        res.json({
+            data: result,
+            status: {
+                state: true,
+                code: 'SP_1'
+            }
+        })
+    }catch(e){
+        res.json(e);
+    }
+})
+
 module.exports = router;
