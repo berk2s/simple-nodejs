@@ -258,4 +258,21 @@ router.get('/search/:query', async (req, res, next) => {
     }
 })
 
+router.get('/search/:category_id/:query', async (req, res, next) => {
+    try{
+        const {category_id, query} = req.params;
+        const result = await Product.find({category_id:category_id, "product_name": new RegExp(query, "gi")});
+
+        res.json({
+            data: result,
+            status: {
+                state: true,
+                code: 'SP_1'
+            }
+        })
+    }catch(e){
+        res.json(e);
+    }
+})
+
 module.exports = router;

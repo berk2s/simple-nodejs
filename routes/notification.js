@@ -117,6 +117,7 @@ router.post('/push',  async (req, res, next) => {
 router.post('/push/user', async (req, res, next) => {
     try{
         const {title, body, token} = req.body;
+        console.log(token);
         var message = {
             data: {    //This is only optional, you can send any data
                 score: '850',

@@ -17,6 +17,9 @@ const brandRouter = require('./routes/brand');
 const productRouter = require('./routes/product');
 const notificationRouter = require('./routes/notification');
 const ordersRouter = require('./routes/orders');
+const couponPRouter = require('./routes/P_coupon');
+
+const couponRouter = require('./routes/coupon');
 
 //middlewares
 const apikeyMiddleware = require('./middleware/apikeymid')
@@ -52,6 +55,8 @@ app.use('/api/notification',  notificationRouter);
 app.use('/api/orders',  ordersRouter);
 app.use('/api/user',  tokenVerifyMiddleware, usersRouter);
 app.use('/api/p/user',  usersPRouter);
+app.use('/api/p/coupon',  couponPRouter);
+app.use('/api/coupon',  tokenVerifyMiddleware, couponRouter);
 
 
 // catch 404 and forward to error handler
