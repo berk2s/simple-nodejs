@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-const fcm = require('fcm-notification');
-const FCM = new fcm('./mavideniste-firebase.json');
+const FCM = require('../helper/fcm')
 
 const UserGroups = require('../Models/UserGroups');
 const Tokens = require('../Models/Tokens');
@@ -119,7 +118,7 @@ router.post('/push/user', async (req, res, next) => {
         const {title, body, token} = req.body;
         console.log(token);
         var message = {
-            data: {    //This is only optional, you can send any data
+            data: {
                 score: '850',
                 time: '2:45'
             },

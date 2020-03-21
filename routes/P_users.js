@@ -40,6 +40,7 @@ router.get('/', cors(corsOptions), async (req, res, next) => {
 router.get('/:user_id', cors(corsOptions), async (req, res, next) => {
     try{
         const {user_id} = req.params;
+        console.log('req')
         const data = await User.findOne({_id: user_id});
         res.json({
             data: data,

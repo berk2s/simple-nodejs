@@ -4,6 +4,8 @@ const router = express.Router();
 //config
 const {PANEL_URL} = require('../constants/config');
 
+const FCM = require('../helper/fcm')
+
 //cors
 var cors = require("cors");
 
@@ -18,6 +20,7 @@ const socketApi = require('../src/socketApi');
 const {TIERED_START} = require('../constants/config');
 
 const Orders = require('../Models/Orders')
+const User = require('../Models/User')
 
 router.get('/product/:order_id', cors(corsOptions), async (req, res, next) => {
     try{
@@ -37,7 +40,70 @@ router.get('/product/:order_id', cors(corsOptions), async (req, res, next) => {
 
 router.get('/open', cors(corsOptions), async (req, res, next) => {
     try{
-        const openOrders = await Orders.find({order_status:0});
+        const openOrders = await Orders.aggregate([
+            {
+              $match:{$or: [{order_status:0}, {order_status:1}, {order_status:2}]},
+            },
+            {
+                $lookup:{
+                    from:'users',
+                    localField:'user_id',
+                    foreignField:'_id',
+                    as:'user'
+                }
+            },
+            {
+                $unwind:{
+                    path:'$user',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+
+
+            {
+                $group:{
+                    _id:{
+                        _id:'$_id',
+                        visibility_id:'$visibility_id',
+                        products:'$products',
+                        price:'$price',
+                        order_status:'$order_status',
+                        order_note:'$order_note',
+                        coupon:'$coupon',
+                        is_bluecurrier:'$is_bluecurrier',
+                        payload_type:'$payload_type',
+                        user_address:'$user_address',
+                        order_date:'$order_date',
+                    },
+                    user:{
+                        $push:'$user'
+                    },
+                }
+            },
+            {
+                $project:{
+                    _id:'$_id._id',
+                    visibility_id:'$_id.visibility_id',
+                    products:'$_id.products',
+                    price:'$_id.price',
+                    order_status:'$_id.order_status',
+                    order_note:'$_id.order_note',
+                    coupon:'$_id.coupon',
+                    is_bluecurrier:'$_id.is_bluecurrier',
+                    payload_type:'$_id.payload_type',
+                    user_address:'$_id.user_address',
+                    order_date:'$_id.order_date',
+                    user:'$user'
+                }
+            },
+
+
+            {
+                $sort: {
+                    _id:1
+                }
+            }
+        ]);
         res.json({
             data: openOrders,
             state: {
@@ -46,6 +112,196 @@ router.get('/open', cors(corsOptions), async (req, res, next) => {
             }
         });
     }catch(e){
+        res.json(e);
+    }
+});
+
+router.put('/price', cors(corsOptions), async (req, res, next) => {
+    try{
+        const {orderid, price} = req.body;
+        const update = await Orders.findByIdAndUpdate(orderid, {
+            price:price
+        });
+        res.json({
+            data: update,
+            state: {
+                status: true,
+                code: 'FO_1'
+            }
+        });
+    }catch(e){
+        console.log(e);
+        res.json(e);
+    }
+})
+
+router.put('/status/prepare', cors(corsOptions), async (req, res, next) => {
+   try{
+       const {orderid, title, text} = req.body;
+       const moment = require('moment');
+       const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
+
+       const update = await Orders.findByIdAndUpdate(orderid, {
+           order_status:1,
+           order_history_prepare: dateTurkey._d
+       });
+
+       const userid = update.user_id;
+
+       const findUser = await User.findOne({_id:userid});
+       const token = findUser.token;
+
+       var message = {
+           data: {
+               score: '850',
+               time: '2:45'
+           },
+           notification:{
+               title : title,
+               body : text
+           },
+           token : token
+       };
+
+       FCM.send(message, function(err, response) {
+           if(err){
+               console.log('error found', err);
+           }else {
+               console.log('response here', response);
+           }
+       });
+
+
+       res.json({
+           data: update,
+           state: {
+               status: true,
+               code: 'PO_1'
+           }
+       });
+   } catch(e){
+       console.log(e)
+       res.json(e);
+   }
+});
+
+router.put('/status/enroute', cors(corsOptions), async (req, res, next) => {
+   try{
+       const {orderid, title, text} = req.body;
+       const moment = require('moment');
+       const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
+
+       const update = await Orders.findByIdAndUpdate(orderid, {
+           order_status:2,
+           order_history_enroute: dateTurkey._d
+       });
+
+       const userid = update.user_id;
+
+       const findUser = await User.findOne({_id:userid});
+       const token = findUser.token;
+
+       var message = {
+           data: {
+               score: '850',
+               time: '2:45'
+           },
+           notification:{
+               title : title,
+               body : text
+           },
+           token : token
+       };
+
+       FCM.send(message, function(err, response) {
+           if(err){
+               console.log('error found', err);
+           }else {
+               console.log('response here', response);
+           }
+       });
+
+       res.json({
+           data: update,
+           state: {
+               status: true,
+               code: 'PO_1'
+           }
+       });
+   } catch(e){
+       console.log(e)
+       res.json(e);
+   }
+});
+
+router.put('/status/successfull', cors(corsOptions), async (req, res, next) => {
+   try{
+       const {orderid, title, text} = req.body;
+       const moment = require('moment');
+       const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
+
+       const update = await Orders.findByIdAndUpdate(orderid, {
+           order_status:3,
+           order_history_successfull: dateTurkey._d
+       });
+
+       const userid = update.user_id;
+
+       const findUser = await User.findOne({_id:userid});
+       const token = findUser.token;
+
+       var message = {
+           data: {
+               score: '850',
+               time: '2:45'
+           },
+           notification:{
+               title : title,
+               body : text
+           },
+           token : token
+       };
+
+       FCM.send(message, function(err, response) {
+           if(err){
+               console.log('error found', err);
+           }else {
+               console.log('response here', response);
+           }
+       });
+
+       res.json({
+           data: update,
+           state: {
+               status: true,
+               code: 'PO_1'
+           }
+       });
+   } catch(e){
+       console.log(e)
+       res.json(e);
+   }
+});
+
+router.put('/status/cancel', cors(corsOptions), async (req, res, next) => {
+    try{
+        const {orderid} = req.body;
+        const moment = require('moment');
+        const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
+
+        const update = await Orders.findByIdAndUpdate(orderid, {
+            order_status:-1,
+            order_history_cancel: dateTurkey._d
+        });
+
+        res.json({
+            data: update,
+            state: {
+                status: true,
+                code: 'PO_1'
+            }
+        });
+    } catch(e){
         res.json(e);
     }
 });
@@ -77,7 +333,8 @@ router.post('/', async (req, res, next) => {
             order_note:order_note,
             is_bluecurrier:is_bluecurrier,
             coupon:coupon,
-            order_date:dateTurkey._d
+            order_date:dateTurkey._d,
+            order_history_pending:dateTurkey._d,
         });
 
         const saveNewOrder = await newOrder.save();
