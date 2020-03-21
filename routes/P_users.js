@@ -37,4 +37,20 @@ router.get('/', cors(corsOptions), async (req, res, next) => {
     }
 });
 
+router.get('/:user_id', cors(corsOptions), async (req, res, next) => {
+    try{
+        const {user_id} = req.params;
+        const data = await User.findOne({_id: user_id});
+        res.json({
+            data: data,
+            status: {
+                state: true,
+                code: 'FU_1'
+            }
+        })
+    }catch(e){
+        res.json(e);
+    }
+});
+
 module.exports = router;

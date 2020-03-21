@@ -3,7 +3,7 @@ require('mongoose-double')(mongoose);
 
 const Schema = mongoose.Schema;
 
-const moment = require('moment-timezone');
+const moment = require('moment');
 const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
 
 var SchemaTypes = mongoose.Schema.Types;
@@ -13,17 +13,9 @@ const OrdersModel = new Schema({
         type:Number,
         default:Date.now()
     },
-    user_id:{
-        type: mongoose.Types.ObjectId
-    },
-    user_address:{
-        type:{}
-    },
-    payload_type:{
-        type:Number
-    },
+
     products:{
-        type:{}
+        type:[]
     },
     price:{
         type:SchemaTypes.Double
@@ -35,9 +27,24 @@ const OrdersModel = new Schema({
     order_note:{
         type:String
     },
+    coupon:{
+        type:{}
+    },
     is_bluecurrier:{
         type:Boolean
     },
+    payload_type:{
+        type:Number
+    },
+
+    user_id:{
+        type: mongoose.Types.ObjectId
+    },
+    user_address:{
+        type:{}
+    },
+
+
     order_date:{
         type:Date,
         default:dateTurkey._d

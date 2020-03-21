@@ -4,6 +4,7 @@ const router = express.Router();
 // relevant model
 const Coupon = require('../Models/Coupon');
 const Product = require('../Models/Product');
+const Category = require('../Models/Category');
 
 //config
 const {PANEL_URL} = require('../constants/config');
@@ -37,6 +38,7 @@ router.post('/validate', async (req, res, next) => {
            });
            return false
        }else{
+           // kupon adeti
            // kupon statusu OK
            // gecerlilik suresi OK
            // daha once kullanilma durumu OK
@@ -53,6 +55,11 @@ router.post('/validate', async (req, res, next) => {
 
            const limit_min_price = checkValidate[0].limit_price;
            const limit_only_selected_items = checkValidate[0].limit_selected_items_only;
+           const limit_selected_categories = checkValidate[0].limit_selected_categories_only;
+           const limit_selected_items = checkValidate[0].limit_selected_items;
+
+           const coupon_price_type = checkValidate[0].coupon_price_type;
+           const coupon_price_unit = checkValidate[0].coupon_price_unit;
 
            if(diff <= 0){
                res.json({
@@ -105,9 +112,6 @@ router.post('/validate', async (req, res, next) => {
 
            if(limit_only_selected_items.status != false){
                const items = limit_only_selected_items.values;
-
-
-
                    if(items.length == products.length){
 
                        const productPromise = products.map(e => {
@@ -164,6 +168,8 @@ router.post('/validate', async (req, res, next) => {
                            })
 
                    }else{
+                       let clearProducts_ = '';
+                       let clearProducts = '';
                        const promseMap = items.map(async e => {
                            return new Promise((resolve, reject) => {
                                Product.findOne({_id:e})
@@ -182,7 +188,7 @@ router.post('/validate', async (req, res, next) => {
                                clearProducts_ = clearProducts.substring(1, clearProducts.length);
                                res.json({
                                    data:`Kupon bu sepette kullanılamaz`,
-                                   info:`* Bu kuponu kullanmak için sepette sadece şu ürünler olmalı: \n ${clearProducts_}`,
+                                   info:`* Bu kuponu kullanmak için sepette sadece şu ürünler olmalı:\n${clearProducts_}`,
                                    status: {
                                        state: true,
                                        code: 'VC_2'
@@ -196,15 +202,123 @@ router.post('/validate', async (req, res, next) => {
 
            }
 
+           if(limit_selected_categories.status != false){
+               const items = limit_selected_categories.values;
+
+               const categoryPromise = products.map(e => {
+                   return new Promise((resolve, reject) => {
+                        if(!items.includes(e.product_category)){
+                            resolve(false);
+                        }else{
+                            resolve(true);
+                        }
+                   });
+               });
+
+               const dataCategory = await Promise.all(categoryPromise);
+
+               if(dataCategory.includes(false)){
+
+                   const itemInfos = items.map(e => {
+                      return new Promise(((resolve, reject) => {
+                          Category.findOne({_id:e})
+                              .then((data) => {
+                                  resolve('\n-'+data.category_name);
+                              })
+                      }));
+                   });
+
+                   const getInfos = await Promise.all(itemInfos);
+                   console.log(getInfos)
+
+                   res.json({
+                       data:`Kupon bu sepette kullanılamaz.`,
+                       info:`* Bu kupon sadece şu kategori ürünlerinin olduğu sepetlerde geçerlidir: ${getInfos}`,
+                       status: {
+                           state: true,
+                           code: 'VC_2'
+                       }
+                   });
+                   return false
+               }else{
+                   // no problem
+               }
+
+           }
+
+           if(limit_selected_items.status != false){
+               const items = limit_selected_items.values;
+
+               const productPromise = products.map(e => {
+                   return new Promise(((resolve, reject) => {
+                       if(items.includes(e.id)){
+                           resolve(true)
+                       }else{
+                           resolve(false);
+                       }
+                   }));
+               });
+
+               const dataPromise = await Promise.all(productPromise);
+
+               if(!dataPromise.includes(true)){
+
+                   const productInfos = items.map(e => {
+                       return new Promise(((resolve, reject) => {
+                           Product
+                               .findOne({_id:e})
+                               .then((data) => {
+                                  resolve('\n-'+data.product_name);
+                               });
+                       }))
+                   });
+
+                   const productsText = await Promise.all(productInfos);
+
+                   res.json({
+                       data:`Kupon bu sepette kullanılamaz.`,
+                       info:`* Bu kupon için sepette şu ürünlerden birileri olmalı: ${productsText}`,
+                       status: {
+                           state: true,
+                           code: 'VC_2'
+                       }
+                   });
+
+                   return false;
+
+               }else{
+                   return true
+               }
+           }
+
+           let result;
+           if(coupon_price_type == 1){
+               const totalPrice = parseFloat(total_price);
+               const discountPrice = (coupon_price_unit);
+               result = totalPrice-discountPrice;
+
+           }else if(coupon_price_type == 2){
+               const totalPrice = parseFloat(total_price);
+               const discountPercantage = (coupon_price_unit);
+
+               const discountAmount = (totalPrice/discountPercantage);
+
+               result = totalPrice-discountAmount;
+
+           }
 
            res.json({
-               data:`All is well.`,
-               info:`* all is well`,
+               data:`Kupon işlemi başarılı`,
+               info:`Kupon işlemi başarılı`,
+               result:result,
+               coupon:checkValidate[0],
                status: {
                    state: true,
-                   code: 'VC_2'
+                   code: 'VC_3'
                }
            });
+           return false;
+
 
        }
 
