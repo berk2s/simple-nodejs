@@ -7,7 +7,6 @@ var logger = require('morgan');
 //config
 const {API_KEY, PANEL_API_KEY} = require('./constants/config');
 
-
 //routers
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -18,8 +17,9 @@ const productRouter = require('./routes/product');
 const notificationRouter = require('./routes/notification');
 const ordersRouter = require('./routes/orders');
 const couponPRouter = require('./routes/P_coupon');
-
 const couponRouter = require('./routes/coupon');
+const smsRouter = require('./routes/sms');
+
 
 //middlewares
 const apikeyMiddleware = require('./middleware/apikeymid')
@@ -36,6 +36,11 @@ const mongoose = require('./helper/db')();
 //api key
 app.set('API_KEY', API_KEY);
 app.set('PANEL_API_KEY', PANEL_API_KEY);
+
+//var schedule = require('node-schedule');/
+//var CronJob = require('cron').CronJob;
+
+//app.set('CronJob', CronJob)
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -57,6 +62,8 @@ app.use('/api/user',  tokenVerifyMiddleware, usersRouter);
 app.use('/api/p/user',  usersPRouter);
 app.use('/api/p/coupon',  couponPRouter);
 app.use('/api/coupon',  tokenVerifyMiddleware, couponRouter);
+app.use('/api/sms', smsRouter);
+
 
 
 // catch 404 and forward to error handler

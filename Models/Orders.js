@@ -65,6 +65,7 @@ const OrdersModel = new Schema({
         type:Date,
         default:dateTurkey._d
     },
+    branch_id:Number,
 });
 
 module.exports = mongoose.model('Orders', OrdersModel);

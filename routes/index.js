@@ -26,6 +26,111 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Expressasd' });
 });
 
+router.post('/resetpass', async (req, res, next) => {
+  try{
+    const {user_id, password} = req.body;
+
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(password, salt, async (err, hash) => {
+        const findUser = await User.findByIdAndUpdate(user_id, {
+          password: hash
+        });
+        res.json({
+          message: findUser,
+          status: {
+            state: true,
+            code: 'RP_1',
+          }
+        });
+      });
+    });
+
+  }catch(e){
+    res.json({
+      message: e,
+      status: {
+        state: true,
+        code: 'R_ERROR',
+      }
+    });
+  }
+})
+
+router.post('/checkrepass', async (req, res, next) => {
+  try{
+    const {phone_number} = req.body;
+    const userCheck = await User.findOne({phone_number: phone_number});
+
+    if(userCheck){
+      res.json({
+        data: userCheck,
+        status: {
+          state: true,
+          code: 'RR_1',
+        }
+      });
+    }else{
+      res.json({
+        data: 'Böyle bir kullanıcı yok',
+        status: {
+          state: true,
+          code: 'RR_0',
+        }
+      });
+    }
+
+  }catch(e){
+    res.json({
+      message: e,
+      status: {
+        state: true,
+        code: 'R_ERROR',
+      }
+    });
+  }
+})
+
+router.post('/checkuser', async (req, res, next) => {
+  try{
+    const {name_surname, email_address, phone_number, password, which_platform} = req.body;
+    const userCheck = await User.findOne({$or: [{email_address: email_address}, {phone_number: phone_number}]});
+
+    if(userCheck){
+      let whichOne = null;
+
+      if(userCheck.email_address == email_address && userCheck.phone_number == phone_number)
+        whichOne = 'both';
+      else if(userCheck.email_address == email_address)
+        whichOne = 'email';
+      else
+        whichOne = 'phone';
+
+      res.json({
+        message:'Böyle bir kullanıcı mevcut!',
+        status:{
+          state:false,
+          code:'R0',
+          whichOne
+        }
+      });
+      return false;
+
+    }else {
+
+            res.json({
+              message: 'Üye temiz!',
+              status: {
+                state: true,
+                code: 'R1',
+              }
+            });
+    }
+
+  }catch(e){
+    res.json(e);
+  }
+});
+
 router.post('/register', async (req, res, next) => {
   try{
     const {name_surname, email_address, phone_number, password, which_platform} = req.body;

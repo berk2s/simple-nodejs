@@ -31,7 +31,7 @@ const UserModel = new Schema({
     },
     is_confirmed:{
         type:Boolean,
-        default:false
+        default:true
     },
     permission_email:{
         type:Boolean,

@@ -42,7 +42,14 @@ router.get('/open', cors(corsOptions), async (req, res, next) => {
     try{
         const openOrders = await Orders.aggregate([
             {
-              $match:{$or: [{order_status:0}, {order_status:1}, {order_status:2}]},
+              $match:{
+                  branch_id:54,
+                  $or: [
+                      {order_status:0},
+                      {order_status:1},
+                      {order_status:2}
+                      ]
+              },
             },
             {
                 $lookup:{
@@ -73,6 +80,7 @@ router.get('/open', cors(corsOptions), async (req, res, next) => {
                         is_bluecurrier:'$is_bluecurrier',
                         payload_type:'$payload_type',
                         user_address:'$user_address',
+                        branch_id:'$branch_id',
                         order_date:'$order_date',
                     },
                     user:{
@@ -93,6 +101,7 @@ router.get('/open', cors(corsOptions), async (req, res, next) => {
                     payload_type:'$_id.payload_type',
                     user_address:'$_id.user_address',
                     order_date:'$_id.order_date',
+                    branch_id:'$_id.branch_id',
                     user:'$user'
                 }
             },
@@ -317,6 +326,7 @@ router.post('/', async (req, res, next) => {
             order_note,
             is_bluecurrier,
             coupon,
+            branch_id
         } = req.body;
 
         const moment = require('moment');
@@ -335,6 +345,7 @@ router.post('/', async (req, res, next) => {
             coupon:coupon,
             order_date:dateTurkey._d,
             order_history_pending:dateTurkey._d,
+            branch_id:branch_id
         });
 
         const saveNewOrder = await newOrder.save();
