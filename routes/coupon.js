@@ -23,7 +23,7 @@ const momentTZ = require('moment-timezone');
 router.post('/validate', async (req, res, next) => {
    try{
 
-       const {coupon_name, user_id, total_price, products} = req.body;
+       const {coupon_name, user_id, total_price, products, branch_id} = req.body;
 
        const checkValidate = await Coupon.find({coupon_name: coupon_name});
 
@@ -38,17 +38,21 @@ router.post('/validate', async (req, res, next) => {
            });
            return false
        }else{
-           // kupon adeti
+           // kupon adeti OK
            // kupon statusu OK
            // gecerlilik suresi OK
            // daha once kullanilma durumu OK
-           // kosul uyumu
+           // kosul uyumu OK
+           // branch id OK
+           // azalt OK
 
            const currentTime = moment.tz(Date.now(), "Europe/Istanbul");
            const couponEndTime = moment(checkValidate[0].coupon_end);
            const diff = couponEndTime.diff(currentTime._d,'minutes');
 
            const coupon_status = checkValidate[0].coupon_status;
+
+           const coupon_branch_id = checkValidate[0].branch_id;
 
            const coupon_users = checkValidate[0].used_by;
            const indexOfUser = coupon_users.map(e => e.id).indexOf(user_id);
@@ -83,6 +87,17 @@ router.post('/validate', async (req, res, next) => {
                return false;
            }
 
+           if(parseInt(coupon_branch_id) != parseInt(branch_id)){
+               res.json({
+                   data:`Bu kupon seçili bayide kullanılamaz`,
+                   status: {
+                       state: true,
+                       code: 'VC_1'
+                   }
+               });
+               return false;
+           }
+
            if(indexOfUser !== -1){
                res.json({
                    data:'Bu kuponu daha önce kullanmışsınız',
@@ -92,6 +107,19 @@ router.post('/validate', async (req, res, next) => {
                    }
                });
                return false;
+           }
+
+           if(checkValidate[0].coupon_amount != 0){
+               if(coupon_users.length >= checkValidate[0].coupon_amount){
+                   res.json({
+                       data:'Bu kupon tükenmiştir',
+                       status: {
+                           state: true,
+                           code: 'VC_1'
+                       }
+                   });
+                   return false;
+               }
            }
 
            if(limit_min_price.status != false){
@@ -296,15 +324,11 @@ router.post('/validate', async (req, res, next) => {
                const totalPrice = parseFloat(total_price);
                const discountPrice = (coupon_price_unit);
                result = totalPrice-discountPrice;
-
            }else if(coupon_price_type == 2){
                const totalPrice = parseFloat(total_price);
                const discountPercantage = (coupon_price_unit);
-
                const discountAmount = (totalPrice/discountPercantage);
-
                result = totalPrice-discountAmount;
-
            }
 
            res.json({

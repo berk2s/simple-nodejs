@@ -21,6 +21,7 @@ const {TIERED_START} = require('../constants/config');
 
 const Orders = require('../Models/Orders')
 const User = require('../Models/User')
+const Coupon = require('../Models/Coupon')
 
 router.get('/product/:order_id', cors(corsOptions), async (req, res, next) => {
     try{
@@ -351,6 +352,17 @@ router.post('/', async (req, res, next) => {
 
         const saveNewOrder = await newOrder.save();
 
+        //
+        if(coupon != null) {
+            const userDetails = await User.findOne({_id: user_id});
+            const couponDetailts = await Coupon.findOne({_id: coupon._id})
+            const newUsedBy = [...couponDetailts.used_by];
+            newUsedBy.push({id: user_id, name: userDetails.name_surname})
+            const updateCoupon = await Coupon.findByIdAndUpdate(coupon._id, {
+                used_by: newUsedBy
+            });
+        }
+        //
         socketApi.io.emit('newOrder', {order: saveNewOrder});
 
         res.json({
