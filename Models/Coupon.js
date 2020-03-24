@@ -48,6 +48,8 @@ const CouponModel = new Schema({
         default:[]
     },
 
+    branch_id:Number,
+
     createdAt:{
         type:Date,
         default:dateTurkey._d

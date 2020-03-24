@@ -38,12 +38,13 @@ router.get('/product/:order_id', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.get('/open', cors(corsOptions), async (req, res, next) => {
+router.get('/open/:branch_id', cors(corsOptions), async (req, res, next) => {
     try{
+        const {branch_id} = req.params;
         const openOrders = await Orders.aggregate([
             {
               $match:{
-                  branch_id:54,
+                  branch_id:parseInt(branch_id),
                   $or: [
                       {order_status:0},
                       {order_status:1},

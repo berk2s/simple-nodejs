@@ -35,7 +35,7 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', cors(corsOptions), async (req, res, next) => {
    try{
-       const {coupon_name, coupon_text, coupon_amount,coupon_status, coupon_price_type, coupon_price_unit, coupon_time, limit_price, limit_selected_items_only, limit_selected_categories_only, limit_selected_items,} = req.body;
+       const {branch_id, coupon_name, coupon_text, coupon_amount,coupon_status, coupon_price_type, coupon_price_unit, coupon_time, limit_price, limit_selected_items_only, limit_selected_categories_only, limit_selected_items,} = req.body;
 
        let coupon_start;
        let coupon_end;
@@ -66,6 +66,7 @@ router.post('/', cors(corsOptions), async (req, res, next) => {
            limit_selected_items_only:limit_selected_items_only,
            limit_selected_categories_only:limit_selected_categories_only,
            limit_selected_items:limit_selected_items,
+           branch_id:branch_id
        });
 
        const saveCoupon = await newCoupon.save();

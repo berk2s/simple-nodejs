@@ -89,7 +89,9 @@ router.post('/push',  async (req, res, next) => {
         const message = {
             data: {    //This is only optional, you can send any data
                 score: '850',
-                time: '2:45'
+                time: '2:45',
+                title:title,
+                body:body,
             },
             notification:{
                 title : title,
@@ -120,11 +122,13 @@ router.post('/push/user', async (req, res, next) => {
         var message = {
             data: {
                 score: '850',
-                time: '2:45'
+                time: '2:45',
+                title:title,
+                body:body,
             },
             notification:{
                 title : title,
-                body : body
+                body : body,
             },
             token : token
         };
@@ -147,49 +151,49 @@ router.post('/token', async(req, res, next) => {
     try {
         const {token, platform} = req.body;
 
-        const checkToken = Tokens.findOne({token:token});
+        const checkToken = await Tokens.find({token:token});
 
-        checkToken.then(isit => {
-            if(!isit){
-                FCM.unsubscribeFromTopic(token, TOPIC_EVERYBODY, function(err, response) {
-                    if(err){
-                        console.log('error found', err);
-                    }else {
-                        console.log('response here', response);
-                    }
-                });
+        if(checkToken.length == 0){
+            FCM.subscribeToTopic(token, TOPIC_EVERYBODY, function(err, response) {
+                if(err){
+                    console.log('error found', err);
+                }else {
+                    console.log('response here', response);
+                }
+            });
 
-                FCM.subscribeToTopic(token, TOPIC_EVERYBODY, function(err, response) {
-                    if(err){
-                        console.log('error found', err);
-                    }else {
-                        console.log('response here', response);
-                    }
-                });
-            }
+            const tokenSave = new Tokens({
+                token: token,
+                platform: platform
+            });
 
-            return isit;
-        }).then(async data => {
-            if(!data) {
-                const tokenSave = new Tokens({
-                    token: token,
-                    platform: platform
-                });
-
-                const saveit = await tokenSave.save();
+            const saveit = await tokenSave.save();
 
 
-                res.json({
-                    data: saveit,
-                    state: {
-                        status: true,
-                        code: 'IT_1'
-                    }
-                });
-            }
-        })
+            console.log('e')
+            res.json({
+                data: saveit,
+                state: {
+                    status: true,
+                    code: 'IT_1'
+                }
+            });
+        }else{
+            console.log('asdsad')
+            res.json({
+                data: 'saveit',
+                state: {
+                    status: true,
+                    code: 'IT_1'
+                }
+            });
+        }
+
+
 
     }catch(e){
+        console.log('e2')
+        console.log(e)
         res.json(e);
     }
 })

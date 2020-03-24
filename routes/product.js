@@ -236,15 +236,13 @@ router.delete('/:product_id', cors(corsOptions), async (req, res, next) => {
    }
 });
 
-router.get('/search/:query', async (req, res, next) => {
+router.get('/search/:branch_id/:query', async (req, res, next) => {
     try{
-        const {query} = req.params;
+        const {query, branch_id} = req.params;
         console.log(query)
         //const result = await Product.find({$text: { $search: query, $language:'tr', $caseSensitive:false }})
 
-        const result = await Product.find(
-                { "product_name": new RegExp(query, "gi") },
-            );
+        const result = await Product.find({ "product_name": new RegExp(query, "gi"), 'branch_id':branch_id });
 
         res.json({
             data: result,
@@ -258,10 +256,10 @@ router.get('/search/:query', async (req, res, next) => {
     }
 })
 
-router.get('/search/:category_id/:query', async (req, res, next) => {
+router.get('/search/:branch_id/:category_id/:query', async (req, res, next) => {
     try{
-        const {category_id, query} = req.params;
-        const result = await Product.find({category_id:category_id, "product_name": new RegExp(query, "gi")});
+        const {category_id, query, branch_id} = req.params;
+        const result = await Product.find({branch_id:branch_id, category_id:category_id, "product_name": new RegExp(query, "gi")});
 
         res.json({
             data: result,
