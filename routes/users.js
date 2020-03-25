@@ -210,4 +210,56 @@ router.put('/token', async (req, res, next) => {
     }
 })
 
+router.put('/password', async (req, res, next) => {
+    try{
+        const {currentpassword, newpassword, userid} = req.body;
+
+        const user = await User.findOne({_id:userid});
+
+        bcrypt.compare(currentpassword, user.password)
+            .then((result) => {
+                if(result) {
+
+                    bcrypt.genSalt(10, (err, salt) => {
+                        bcrypt.hash(newpassword, salt, async (err, hash) => {
+                            const findUser = await User.findByIdAndUpdate(userid, {
+                                password: hash
+                            });
+                            res.json({
+                                data: 'Şifre değiştirildi',
+                                status: {
+                                    state: true,
+                                    code: 'RP_2',
+                                }
+                            });
+                        });
+                    });
+
+                    return false;
+                }else{
+                    res.json({
+                        data: 'Mevcut şifre hatalı',
+                        status: {
+                            state: true,
+                            code: 'RP_1'
+                        }
+                    });
+                    return false;
+                }
+            })
+
+
+    }catch(e){
+
+        res.json({
+            data: 'Beklenmedik hata',
+            status: {
+                state: true,
+                code: 'RP_1'
+            }
+        })
+
+    }
+})
+
 module.exports = router;
