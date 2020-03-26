@@ -85,7 +85,7 @@ router.get('/user/open/:user_id', async (req, res, next) => {
 
             {
                 $sort: {
-                    _id:1
+                    _id:-1
                 }
             }
         ]);
@@ -168,7 +168,7 @@ router.get('/user/history/:user_id', async (req, res, next) => {
 
             {
                 $sort: {
-                    _id:1
+                    _id:-1
                 }
             }
         ]);

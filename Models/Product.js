@@ -11,6 +11,7 @@ var SchemaTypes = mongoose.Schema.Types;
 
 const ProductModel = new Schema({
     category_id: mongoose.Types.ObjectId,
+    sub_category_id:mongoose.Types.ObjectId,
     branch_id: Number,
     brand_id: mongoose.Types.ObjectId,
     product_name: {

@@ -15,6 +15,8 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+const mongoose = require('mongoose');
+
 router.get('/', async(req, res, next) => {
    try{
 
@@ -114,10 +116,11 @@ router.get('/get/:branch_id/:category_id', async(req, res, next) => {
 router.post('/', cors(corsOptions), async (req, res, next) => {
 
    try{
-       const {product_image, product_amonut, product_unit_weight, product_unit_type, branch_id, category_id, brand_id, product_name, product_list_price, product_discount_price, product_discount} = req.body;
+       const {product_image, product_amonut, sub_category_id, product_unit_weight, product_unit_type, branch_id, category_id, brand_id, product_name, product_list_price, product_discount_price, product_discount} = req.body;
        const product = new Product({
            branch_id:branch_id,
            category_id:category_id,
+           sub_category_id:sub_category_id,
            brand_id:brand_id,
            product_name:product_name,
            product_list_price:product_list_price,
@@ -270,6 +273,30 @@ router.get('/search/:branch_id/:category_id/:query', async (req, res, next) => {
         })
     }catch(e){
         res.json(e);
+    }
+})
+
+router.get('/sub/:sub_category_id', async (req, res, next) => {
+    try{
+        const {sub_category_id} = req.params;
+
+        const products = await Product.find({sub_category_id:sub_category_id});
+
+        res.json({
+            data:products,
+            status:{
+                state:false,
+                code:'FP_1'
+            }
+        })
+    }catch(e){
+        res.json({
+            data:e,
+            status:{
+                state:false,
+                code:'EE_1'
+            }
+        })
     }
 })
 

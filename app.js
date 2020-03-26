@@ -19,6 +19,8 @@ const ordersRouter = require('./routes/orders');
 const couponPRouter = require('./routes/P_coupon');
 const couponRouter = require('./routes/coupon');
 const smsRouter = require('./routes/sms');
+const campaignRouter = require('./routes/campaign')
+const subcategoryRouter = require('./routes/subcategory')
 
 
 //middlewares
@@ -63,8 +65,8 @@ app.use('/api/p/user',  usersPRouter);
 app.use('/api/p/coupon',  couponPRouter);
 app.use('/api/coupon',  tokenVerifyMiddleware, couponRouter);
 app.use('/api/sms', smsRouter);
-
-
+app.use('/api/campaign', campaignRouter);
+app.use('/api/subcategory', subcategoryRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
