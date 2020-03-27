@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
 
     if (!token) {
         res.json({
-            message: 'invalid token!',
+            message: 'invalid token! ' + token,
             status: {
                 state: false,
                 code: 'JWT0'
@@ -16,7 +16,13 @@ module.exports = (req, res, next) => {
 
     jwt.verify(token, req.app.get('API_KEY'), (err, decoded) => {
         if (err) {
-            res.json(err);
+            res.json({
+                message: 'invalid token!! ' + token,
+                status: {
+                    state: false,
+                    code: 'JWT0'
+                }
+            });
             return false;
         }
 
