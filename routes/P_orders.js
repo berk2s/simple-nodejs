@@ -25,6 +25,94 @@ const Coupon = require('../Models/Coupon')
 
 const mongoose = require('mongoose')
 
+router.get('/history/:branch_id', cors(corsOptions), async (req, res, next) => {
+    try{
+        const {branch_id} = req.params;
+        const openOrders = await Orders.aggregate([
+            {
+                $match:{
+                    branch_id:parseInt(branch_id),
+                    is_bluecurrier:false,
+                    $or: [
+                        {order_status:3},
+                    ]
+                },
+            },
+            {
+                $lookup:{
+                    from:'users',
+                    localField:'user_id',
+                    foreignField:'_id',
+                    as:'user'
+                }
+            },
+            {
+                $unwind:{
+                    path:'$user',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+
+
+            {
+                $group:{
+                    _id:{
+                        _id:'$_id',
+                        visibility_id:'$visibility_id',
+                        products:'$products',
+                        price:'$price',
+                        order_status:'$order_status',
+                        order_note:'$order_note',
+                        coupon:'$coupon',
+                        is_bluecurrier:'$is_bluecurrier',
+                        payload_type:'$payload_type',
+                        user_address:'$user_address',
+                        branch_id:'$branch_id',
+                        order_date:'$order_date',
+                    },
+                    user:{
+                        $push:'$user'
+                    },
+                }
+            },
+            {
+                $project:{
+                    _id:'$_id._id',
+                    visibility_id:'$_id.visibility_id',
+                    products:'$_id.products',
+                    price:'$_id.price',
+                    order_status:'$_id.order_status',
+                    order_note:'$_id.order_note',
+                    coupon:'$_id.coupon',
+                    is_bluecurrier:'$_id.is_bluecurrier',
+                    payload_type:'$_id.payload_type',
+                    user_address:'$_id.user_address',
+                    order_date:'$_id.order_date',
+                    branch_id:'$_id.branch_id',
+                    user:'$user'
+                }
+            },
+
+
+            {
+                $sort: {
+                    _id:1
+                }
+            }
+        ]);
+        res.json({
+            data: openOrders,
+            state: {
+                status: true,
+                code: 'FO_1'
+            }
+        });
+    }catch(e){
+        console.log(e)
+        res.json(e);
+    }
+})
+
 router.get('/user/open/:user_id', cors(corsOptions), async (req, res, next) => {
     try{
         const {user_id} = req.params;

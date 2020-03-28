@@ -44,6 +44,14 @@ router.get('/:branch_id', cors(corsOptions), async(req, res, next) => {
             },
             {
                 $lookup:{
+                    from:'subcategories',
+                    foreignField:'_id',
+                    localField:'sub_category_id',
+                    as:'subcategory'
+                }
+            },
+            {
+                $lookup:{
                     from:'brands',
                     foreignField:'_id',
                     localField:'brand_id',
@@ -59,6 +67,12 @@ router.get('/:branch_id', cors(corsOptions), async(req, res, next) => {
             {
                 $unwind:{
                     path:'$brand',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $unwind:{
+                    path:'$subcategory',
                     preserveNullAndEmptyArrays: true
                 }
             },
@@ -184,14 +198,15 @@ router.put('/edit/discount', cors(corsOptions), async(req, res, next) => {
 
 router.put('/edit', cors(corsOptions), async(req, res, next) => {
    try{
-       const {product_id, product_name, category_id, brand_id, product_unit_type, product_unit_weight,product_amonut} = req.body;
+       const {sub_category_id, product_id, product_name, category_id, brand_id, product_unit_type, product_unit_weight,product_amonut} = req.body;
        const update = await Product.findByIdAndUpdate(product_id, {
            product_name:product_name,
            category_id: category_id,
            brand_id: brand_id,
            product_unit_type: product_unit_type,
            product_unit_weight: parseInt(product_unit_weight),
-           product_amonut: parseInt(product_amonut)
+           product_amonut: parseInt(product_amonut),
+           sub_category_id:sub_category_id
        });
        res.json({
            data: update,
