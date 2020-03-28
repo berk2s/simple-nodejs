@@ -22,6 +22,7 @@ const smsRouter = require('./routes/sms');
 const campaignRouter = require('./routes/campaign')
 const subcategoryRouter = require('./routes/subcategory')
 const ordersPRouter = require('./routes/P_orders')
+const newsRouter = require('./routes/news')
 
 
 //middlewares
@@ -69,9 +70,13 @@ app.use('/api/sms', smsRouter);
 app.use('/api/campaign', campaignRouter);
 app.use('/api/subcategory', subcategoryRouter);
 
+app.use('/api/news',  newsRouter);
+
 app.use('/api/p/orders',  ordersPRouter);
 app.use('/api/p/user',  usersPRouter);
 app.use('/api/p/coupon',  couponPRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

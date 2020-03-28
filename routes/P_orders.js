@@ -330,25 +330,28 @@ router.put('/status/prepare', cors(corsOptions), async (req, res, next) => {
         const findUser = await User.findOne({_id:userid});
         const token = findUser.token;
 
-        var message = {
-            data: {
-                score: '850',
-                time: '2:45'
-            },
-            notification:{
-                title : title,
-                body : text
-            },
-            token : token
-        };
+        if(token != null) {
 
-        FCM.send(message, function(err, response) {
-            if(err){
-                console.log('error found', err);
-            }else {
-                console.log('response here', response);
-            }
-        });
+            var message = {
+                data: {
+                    score: '850',
+                    time: '2:45'
+                },
+                notification: {
+                    title: title,
+                    body: text
+                },
+                token: token
+            };
+
+            FCM.send(message, function (err, response) {
+                if (err) {
+                    console.log('error found', err);
+                } else {
+                    console.log('response here', response);
+                }
+            });
+        }
 
 
         res.json({

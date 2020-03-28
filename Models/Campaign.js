@@ -10,6 +10,7 @@ const CampaignSchema = new Schema({
     campaign_type:Number,
     campaign_desc:String,
     campaign_image:String,
+    branch_id:Number,
     status:{
         type:Boolean,
         default:true

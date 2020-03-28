@@ -16,6 +16,9 @@ const CategoryModel = new Schema({
     status:{
         type:Boolean,
         default:true
+    },
+    created_at:{
+        type:Date,
     }
 });
 

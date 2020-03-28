@@ -84,7 +84,7 @@ router.get('/:branch_id', cors(corsOptions), async(req, res, next) => {
 router.get('/get/:product_id', async (req, res, next) => {
     try{
         const {product_id} = req.params;
-        const product = await Product.findOne({_id: product_id});
+        const product = await Product.findOne({_id: product_id, product_status:true});
         res.json({
             data: product,
             status: {

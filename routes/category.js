@@ -3,6 +3,8 @@ const router = express.Router();
 
 // relevant model
 const Category = require('../Models/Category');
+const SubCategory = require('../Models/SubCategory');
+const Product = require('../Models/Product');
 
 //config
 const {PANEL_URL} = require('../constants/config');
@@ -106,10 +108,14 @@ router.get('/current/:branch_id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
     const {category_name, category_image, branch_id} = req.body;
     try{
+        const moment = require('moment');
+        const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
+
         const category = new Category({
-           category_name,
-           category_image,
-           branch_id
+           category_name:category_name,
+           category_image:category_image,
+           branch_id:branch_id,
+            created_at:dateTurkey._d
         });
         const category_ = await category.save();
         res.json({
@@ -125,13 +131,21 @@ router.post('/', async (req, res, next) => {
 });
 
 router.put('/p/edit', cors(corsOptions), async (req, res, next) => {
-    const {category_id, category_name, category_image, status} = req.body;
+    const {category_id, category_name, category_image, status, delete_subs} = req.body;
     try{
         const update = await Category.findByIdAndUpdate(category_id, {
             category_name: category_name,
             category_image:category_image,
             status: status
         });
+
+        console.log(delete_subs)
+
+        delete_subs.map(async e => {
+            const deleteit = await SubCategory.deleteOne({_id: e});
+            const updateit = await Product.updateMany({'sub_category_id': e}, {'$set': {'sub_category_id': null}});
+        });
+
         res.json({
             data: update,
             status: {
@@ -191,6 +205,10 @@ router.delete('/p/delete/:category_id', cors(corsOptions), async(req, res, next)
     try{
         const {category_id} = req.params;
         const result = await Category.findByIdAndDelete(category_id);
+
+        await Product.updateMany({'category_id': category_id}, {'$set': {'category_id': null}});
+        await SubCategory.updateMany({'category_id': category_id}, {'$set': {'category_id': null}});
+
         res.json({
             category: result,
             state:{

@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 // relevant model
 const Brand = require('../Models/Brand');
-
+const Product = require('../Models/Product')
 //config
 const {PANEL_URL} = require('../constants/config');
 
@@ -212,6 +212,16 @@ router.put('/', cors(corsOptions), async(req, res, next) => {
                 code: 'UB_1'
             }
         });
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.delete('/', cors(corsOptions), async(req, res, next) => {
+    try{
+        await Brand.deleteOne({_id: req.body.brand_id});
+        await Product.updateMany({brand_id: req.body.brand_id}, {$set: {brand_id: null}});
+        res.json({});
     }catch(e){
         res.json(e);
     }

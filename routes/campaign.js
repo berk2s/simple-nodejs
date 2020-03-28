@@ -12,12 +12,18 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
-router.get('/', async (req, res, next) => {
+router.get('/:branch_id', async (req, res, next) => {
     try{
+        console.log(req.params.branch_id)
         const campaigns = await Campaign.aggregate([
             {
                 $match:{
-                    status:true
+                    status:true,
+                }
+            },
+            {
+                $match:{
+                    branch_id:parseInt(req.params.branch_id),
                 }
             },
             {
@@ -52,8 +58,11 @@ router.post('/', cors(corsOptions), async (req, res, next) => {
             campaign_short_desc,
             campaign_type,
             campaign_desc,
-            campaign_image
+            campaign_image,
+            branch_id
         } = req.body;
+
+        console.log(branch_id)
 
         const moment = require('moment');
         const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
@@ -68,10 +77,13 @@ router.post('/', cors(corsOptions), async (req, res, next) => {
             campaign_type:campaign_type,
             campaign_image:campaign_image,
             campaign_desc:desc,
-            campaign_date:time
+            campaign_date:time,
+            branch_id:branch_id
         })
 
         const saveCampaign = await newCampaign.save();
+
+        console.log(saveCampaign)
 
         res.json({
             data:saveCampaign,
