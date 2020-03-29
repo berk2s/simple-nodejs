@@ -16,13 +16,14 @@ const brandRouter = require('./routes/brand');
 const productRouter = require('./routes/product');
 const notificationRouter = require('./routes/notification');
 const ordersRouter = require('./routes/orders');
-const couponPRouter = require('./routes/P_coupon');
 const couponRouter = require('./routes/coupon');
+const couponPRouter = require('./routes/P_coupon');
 const smsRouter = require('./routes/sms');
 const campaignRouter = require('./routes/campaign')
 const subcategoryRouter = require('./routes/subcategory')
 const ordersPRouter = require('./routes/P_orders')
 const newsRouter = require('./routes/news')
+const statementRouter = require('./routes/statement')
 
 
 //middlewares
@@ -69,6 +70,8 @@ app.use('/api/coupon',  tokenVerifyMiddleware, couponRouter);
 app.use('/api/sms', smsRouter);
 app.use('/api/campaign', campaignRouter);
 app.use('/api/subcategory', subcategoryRouter);
+
+app.use('/api/statement', statementRouter);
 
 app.use('/api/news',  newsRouter);
 

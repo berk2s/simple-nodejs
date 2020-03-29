@@ -15,10 +15,57 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
+router.put('/changeimage', cors(corsOptions), async(req, res, next) => {
+    try{
+        const {news_id, image} = req.body;
+        console.log(news_id)
+        console.log(image)
+        await News.updateOne({_id: news_id}, {
+            news_image:image
+        });
+        res.json({})
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.delete('/', cors(corsOptions), async (req, res, next) => {
+    try{
+        const deleteIt = await News.deleteOne({_id: req.body.news_id});
+        res.json({})
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.get('/all/:branch_id', cors(corsOptions), async(req, res, next) => {
+    try{
+        const {branch_id} = req.params;
+        const news = await News.find({branch_id:parseInt(branch_id)});
+
+        res.json({
+            data: news,
+            status:{
+                code:'FN_1',
+                state:true
+            }
+        });
+
+    }catch(e){
+        res.json({
+            data: e,
+            status:{
+                code:'EE_1',
+                state:true
+            }
+        });
+    }
+})
+
 router.get('/:branch_id',  async(req, res, next) => {
     try{
         const {branch_id} = req.params;
-        const news = await News.find({branch_id:parseInt(branch_id)})
+        const news = await News.find({branch_id:parseInt(branch_id), news_status:true})
             .sort({_id: -1})
             .limit(10);
 

@@ -32,7 +32,7 @@ router.get('/history/:branch_id', cors(corsOptions), async (req, res, next) => {
             {
                 $match:{
                     branch_id:parseInt(branch_id),
-                    is_bluecurrier:false,
+                    //is_bluecurrier:false,
                     $or: [
                         {order_status:3},
                     ]
@@ -67,6 +67,10 @@ router.get('/history/:branch_id', cors(corsOptions), async (req, res, next) => {
                         is_bluecurrier:'$is_bluecurrier',
                         payload_type:'$payload_type',
                         user_address:'$user_address',
+                        order_history_success:'$order_history_success',
+                        order_history_enroute:'$order_history_enroute',
+                        order_history_prepare:'$order_history_enroute',
+                        user_address:'$user_address',
                         branch_id:'$branch_id',
                         order_date:'$order_date',
                     },
@@ -89,6 +93,9 @@ router.get('/history/:branch_id', cors(corsOptions), async (req, res, next) => {
                     user_address:'$_id.user_address',
                     order_date:'$_id.order_date',
                     branch_id:'$_id.branch_id',
+                    order_history_success:'$_id.order_history_success',
+                    order_history_enroute:'$_id.order_history_enroute',
+                    order_history_prepare:'$_id.order_history_enroute',
                     user:'$user'
                 }
             },
@@ -96,7 +103,7 @@ router.get('/history/:branch_id', cors(corsOptions), async (req, res, next) => {
 
             {
                 $sort: {
-                    _id:1
+                    _id:-1
                 }
             }
         ]);
@@ -471,25 +478,28 @@ router.put('/status/enroute', cors(corsOptions), async (req, res, next) => {
         const findUser = await User.findOne({_id:userid});
         const token = findUser.token;
 
-        var message = {
-            data: {
-                score: '850',
-                time: '2:45'
-            },
-            notification:{
-                title : title,
-                body : text
-            },
-            token : token
-        };
+        if(token != null){
+            var message = {
+                data: {
+                    score: '850',
+                    time: '2:45'
+                },
+                notification:{
+                    title : title,
+                    body : text
+                },
+                token : token
+            };
 
-        FCM.send(message, function(err, response) {
-            if(err){
-                console.log('error found', err);
-            }else {
-                console.log('response here', response);
-            }
-        });
+            FCM.send(message, function(err, response) {
+                if(err){
+                    console.log('error found', err);
+                }else {
+                    console.log('response here', response);
+                }
+            });
+        }
+
 
         res.json({
             data: update,
@@ -520,25 +530,27 @@ router.put('/status/successfull', cors(corsOptions), async (req, res, next) => {
         const findUser = await User.findOne({_id:userid});
         const token = findUser.token;
 
-        var message = {
-            data: {
-                score: '850',
-                time: '2:45'
-            },
-            notification:{
-                title : title,
-                body : text
-            },
-            token : token
-        };
+        if(token != null){
+            var message = {
+                data: {
+                    score: '850',
+                    time: '2:45'
+                },
+                notification:{
+                    title : title,
+                    body : text
+                },
+                token : token
+            };
 
-        FCM.send(message, function(err, response) {
-            if(err){
-                console.log('error found', err);
-            }else {
-                console.log('response here', response);
-            }
-        });
+            FCM.send(message, function(err, response) {
+                if(err){
+                    console.log('error found', err);
+                }else {
+                    console.log('response here', response);
+                }
+            });
+        }
 
         res.json({
             data: update,

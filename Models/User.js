@@ -45,6 +45,9 @@ const UserModel = new Schema({
         type:String,
         default:null
     },
+    user_branch:{
+        type:String,
+    },
     createdAt:{
         type:Date,
         default:dateTurkey._d

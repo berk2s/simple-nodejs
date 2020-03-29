@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const FCM = require('../helper/fcm')
 
+const User = require('../Models/User');
 const UserGroups = require('../Models/UserGroups');
 const Tokens = require('../Models/Tokens');
 
@@ -12,6 +13,8 @@ const {PANEL_URL} = require('../constants/config');
 
 //cors
 var cors = require("cors");
+const axios = require('axios')
+const {SMS_API_ID, SMS_API_PASSWORD} = require('../constants/config')
 
 var corsOptions = {
     origin: PANEL_URL,
@@ -78,33 +81,155 @@ router.post('/topic', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.post('/push',  async (req, res, next) => {
+router.post('/all/sms', async (req,res,next) => {
     try{
-        const {title, body, group} = req.body;
+        const {body, branch_id} = req.body;
+        const users = await User.find({});
+        users.map(async e => {
+            const number = '9'+e.phone_number;
+
+            const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
+                "api_id": SMS_API_ID,
+                "api_password": SMS_API_PASSWORD,
+                "sms_type": 'T',
+                "encoding": 'T',
+                "sender_id": 'mavideniste',
+                "phonenumber": number,
+                "textmessage": body,
+            });
+
+        })
+
+        res.json({})
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.post('/sms', async (req,res,next) => {
+    try{
+        const {body, branch_id} = req.body;
+        const users = await User.find({user_branch: parseInt(branch_id)});
+        users.map(async e => {
+            const number = '9'+e.phone_number;
+
+            const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
+                "api_id": SMS_API_ID,
+                "api_password": SMS_API_PASSWORD,
+                "sms_type": 'T',
+                "encoding": 'T',
+                "sender_id": 'mavideniste',
+                "phonenumber": number,
+                "textmessage": body,
+            });
+
+        })
+
+        res.json({})
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.post('/sms/user', async (req,res,next) => {
+    try{
+        const {body, phone_number} = req.body;
+
+        console.log(body)
+        console.log(phone_number)
+
+            const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
+                "api_id": SMS_API_ID,
+                "api_password": SMS_API_PASSWORD,
+                "sms_type": 'T',
+                "encoding": 'T',
+                "sender_id": 'mavideniste',
+                "phonenumber": phone_number,
+                "textmessage": body,
+            });
+
+        res.json({})
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.post('/all/push',  async (req, res, next) => {
+    try{
+        const {title, body, group, branch_id} = req.body;
 
         const topic = group;
 
-        console.log(topic);
 
-        const message = {
-            data: {    //This is only optional, you can send any data
-                score: '850',
-                time: '2:45',
-                title:title,
-                body:body,
-            },
-            notification:{
-                title : title,
-                body : body
-            },
-            topic:topic.trim(),
-        };
+        const users = await User.find({});
+        users.map(e => {
+            const token = e.token;
 
-        FCM.send(message, function(err, response) {
-            if(err){
-                console.log('err--', err);
-            }else {
-                console.log('response-----', response);
+            if(token != null){
+                var message = {
+                    data: {
+                        score: '850',
+                        time: '2:45',
+                        title:title,
+                        body:body,
+                    },
+                    notification:{
+                        title : title,
+                        body : body,
+                    },
+                    token : token
+                };
+
+                FCM.send(message, function(err, response) {
+                    if(err){
+                        console.log('error found', err);
+                    }else {
+                        console.log('response here', response);
+                    }
+                });
+            }
+        })
+
+
+        res.json({status:tokens})
+    }catch(e){
+        res.json(e);
+    }
+});
+
+router.post('/push',  async (req, res, next) => {
+    try{
+        const {title, body, group, branch_id} = req.body;
+
+        const topic = group;
+
+
+        const users = await User.find({user_branch: parseInt(branch_id)});
+        users.map(e => {
+            const token = e.token;
+
+            if(token != null){
+                var message = {
+                    data: {
+                        score: '850',
+                        time: '2:45',
+                        title:title,
+                        body:body,
+                    },
+                    notification:{
+                        title : title,
+                        body : body,
+                    },
+                    token : token
+                };
+
+                FCM.send(message, function(err, response) {
+                    if(err){
+                        console.log('error found', err);
+                    }else {
+                        console.log('response here', response);
+                    }
+                });
             }
         })
 

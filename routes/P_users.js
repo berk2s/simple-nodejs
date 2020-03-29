@@ -22,9 +22,9 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
-router.get('/', cors(corsOptions), async (req, res, next) => {
+router.get('/branch/:branch_id', cors(corsOptions), async (req, res, next) => {
     try{
-        const data = await User.find({});
+        const data = await User.find({user_branch: parseInt(req.params.branch_id)});
         res.json({
             data: data,
             status: {

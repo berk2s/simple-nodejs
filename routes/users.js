@@ -262,4 +262,28 @@ router.put('/password', async (req, res, next) => {
     }
 })
 
+router.put('/branch', async (req, res, next) => {
+   try{
+       const {user_id, branch} = req.body;
+       const update = await User.updateOne({_id:user_id}, {
+          user_branch: branch
+       });
+       res.json({
+           data:update,
+           status:{
+               code:'UB_1',
+               state:true
+           }
+       })
+   } catch(e){
+       res.json({
+           data:'error',
+           status:{
+               code:'EE_1',
+               state:true
+           }
+       });
+   }
+});
+
 module.exports = router;
