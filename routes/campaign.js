@@ -12,6 +12,16 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+router.delete('/', cors(corsOptions), async (req, res, next) => {
+    try{
+        const {campaign_id} = req.body;
+        await Campaign.deleteOne({_id: campaign_id});
+        res.json({});
+    }catch(e){
+        res.json(e);
+    }
+})
+
 router.put('/', cors(corsOptions), async (req, res, next) => {
     try{
         const {campaign_id, campaign_name, campaign_short_desc, campaign_type, campaign_desc} = req.body;

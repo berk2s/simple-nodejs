@@ -22,6 +22,37 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+router.get('/all', async (req, res, next) => {
+    try{
+        const data = await User.find({});
+        res.json({
+            data: data,
+            status: {
+                state: true,
+                code: 'FU_1'
+            }
+        })
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.get('/address/:user_id', async (req, res , next) => {
+    try{
+        const {user_id} = req.params
+        const address = await UserAddress.find({user_id: user_id}).sort({_id: -1});
+        res.json({
+            data: address,
+            status: {
+                state: true,
+                code: 'AF_1'
+            }
+        })
+    }catch(e){
+        res.json(e);
+    }
+});
+
 router.get('/branch/:branch_id', cors(corsOptions), async (req, res, next) => {
     try{
         const data = await User.find({user_branch: parseInt(req.params.branch_id)});

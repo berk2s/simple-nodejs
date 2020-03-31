@@ -171,6 +171,9 @@ router.put('/p/edit/status', cors(corsOptions), async(req, res, next) => {
         const updatestatus = await Category.findByIdAndUpdate(category_id, {
             status: status
         });
+
+        await Product.updateMany({'category_id': category_id}, {'$set': {'product_status': status}});
+
         res.json({
             data: updatestatus,
             status: {
@@ -206,7 +209,7 @@ router.delete('/p/delete/:category_id', cors(corsOptions), async(req, res, next)
         const {category_id} = req.params;
         const result = await Category.findByIdAndDelete(category_id);
 
-        await Product.updateMany({'category_id': category_id}, {'$set': {'category_id': null}});
+        await Product.updateMany({'category_id': category_id}, {'$set': {'category_id': null, 'product_status': false}});
         await SubCategory.updateMany({'category_id': category_id}, {'$set': {'category_id': null}});
 
         res.json({

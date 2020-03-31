@@ -14,12 +14,6 @@ router.post('/repass', async(req, res, next) => {
 
         let textmessage = `Eğer şifre sıfırlama talebinde bulunmadıysanız dikkate almayın. Doğrulama kodu: ${code}`
 
-        const keyToDB = new KeyModel({
-            key: unique_key,
-            code: code,
-            phone_number:phone_number,
-            type:2,
-        });
 
         const keyCheck = await KeyModel.findOne({type:2, $or: [{key: unique_key}, {phone_number: phone_number}]});
 
@@ -32,10 +26,9 @@ router.post('/repass', async(req, res, next) => {
                     code: 'SV_1'
                 }
             });
+            console.log('here')
             return false;
         }else {
-
-            const saveKey = await keyToDB.save();
 
             const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
                 "api_id": SMS_API_ID,
@@ -47,6 +40,16 @@ router.post('/repass', async(req, res, next) => {
                 "textmessage": textmessage,
             });
 
+            console.log(sendSMS)
+            console.log('here2')
+
+            const keyToDB = new KeyModel({
+                key: unique_key,
+                code: code,
+                phone_number:phone_number,
+                type:2,
+            });
+            const saveKey = await keyToDB.save();
 
 
             let startTime = new Date(Date.now() + 120000);

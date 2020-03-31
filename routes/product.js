@@ -95,6 +95,22 @@ router.get('/:branch_id', cors(corsOptions), async(req, res, next) => {
     }
 });
 
+router.get('/get/basket/:product_id', async (req, res, next) => {
+    try{
+        const {product_id} = req.params;
+        const product = await Product.findOne({_id: product_id, product_status:true});
+        res.json({
+            data: product,
+            status: {
+                state: true,
+                code: 'FP_1'
+            }
+        })
+    }catch(e){
+        res.json(e);
+    }
+});
+
 router.get('/get/:product_id', async (req, res, next) => {
     try{
         const {product_id} = req.params;
@@ -131,10 +147,19 @@ router.post('/', cors(corsOptions), async (req, res, next) => {
 
    try{
        const {product_image, product_amonut, sub_category_id, product_unit_weight, product_unit_type, branch_id, category_id, brand_id, product_name, product_list_price, product_discount_price, product_discount} = req.body;
+
+       let subid = null;
+
+       if(sub_category_id.trim() != '')
+           subid = sub_category_id;
+
+       console.log(subid);
+       console.log(typeof subid);
+
        const product = new Product({
            branch_id:branch_id,
            category_id:category_id,
-           sub_category_id:sub_category_id,
+           sub_category_id:subid == 'null' ? null : subid,
            brand_id:brand_id,
            product_name:product_name,
            product_list_price:product_list_price,
@@ -206,7 +231,7 @@ router.put('/edit', cors(corsOptions), async(req, res, next) => {
            product_unit_type: product_unit_type,
            product_unit_weight: parseInt(product_unit_weight),
            product_amonut: parseInt(product_amonut),
-           sub_category_id:sub_category_id
+           sub_category_id:sub_category_id != 'null' ? sub_category_id : null
        });
        res.json({
            data: update,

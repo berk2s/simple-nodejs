@@ -88,6 +88,7 @@ router.get('/weekly', cors(corsOptions), async (req, res, next) => {
     }
 })
 
+
 router.get('/category/all', cors(corsOptions), async (req, res, next) => {
     try{
 

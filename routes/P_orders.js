@@ -211,12 +211,28 @@ router.get('/user/history/:user_id', cors(corsOptions), async (req, res, next) =
             {
                 $match:{
                     user_id:mongoose.Types.ObjectId(user_id),
+                    //is_bluecurrier:false,
                     $or: [
-                        {order_status:parseInt(-1)},
                         {order_status:3},
                     ]
                 },
             },
+            {
+                $lookup:{
+                    from:'users',
+                    localField:'user_id',
+                    foreignField:'_id',
+                    as:'user'
+                }
+            },
+            {
+                $unwind:{
+                    path:'$user',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+
+
             {
                 $group:{
                     _id:{
@@ -230,13 +246,16 @@ router.get('/user/history/:user_id', cors(corsOptions), async (req, res, next) =
                         is_bluecurrier:'$is_bluecurrier',
                         payload_type:'$payload_type',
                         user_address:'$user_address',
+                        order_history_success:'$order_history_success',
+                        order_history_enroute:'$order_history_enroute',
+                        order_history_prepare:'$order_history_enroute',
+                        user_address:'$user_address',
                         branch_id:'$branch_id',
                         order_date:'$order_date',
-                        order_history_prepare:'$order_history_prepare',
-                        order_history_enroute:'$order_history_enroute',
-                        order_history_success:'$order_history_success',
-                        order_history_cancel:'$order_history_cancel',
-                    }
+                    },
+                    user:{
+                        $push:'$user'
+                    },
                 }
             },
             {
@@ -253,10 +272,10 @@ router.get('/user/history/:user_id', cors(corsOptions), async (req, res, next) =
                     user_address:'$_id.user_address',
                     order_date:'$_id.order_date',
                     branch_id:'$_id.branch_id',
-                    order_history_prepare:'$_id.order_history_prepare',
-                    order_history_enroute:'$_id.order_history_enroute',
                     order_history_success:'$_id.order_history_success',
-                    order_history_cancel:'$_id.order_history_cancel',
+                    order_history_enroute:'$_id.order_history_enroute',
+                    order_history_prepare:'$_id.order_history_enroute',
+                    user:'$user'
                 }
             },
 
@@ -275,6 +294,7 @@ router.get('/user/history/:user_id', cors(corsOptions), async (req, res, next) =
             }
         })
     }catch(e){
+        console.log(e)
         res.json({
             data: e,
             state: {
