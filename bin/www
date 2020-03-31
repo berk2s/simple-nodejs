@@ -38,7 +38,7 @@ const {PANEL_URL} = require('../constants/config')
 const socketApi = require('../src/socketApi');
 const io = socketApi.io;
 io.attach(server);
-io.origins(PANEL_URL)
+io.set('origins', PANEL_URL+':*')
 
 
 /**
