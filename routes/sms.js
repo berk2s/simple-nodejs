@@ -112,8 +112,8 @@ router.post('/newuser', async(req, res, next) => {
            const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
                "api_id": SMS_API_ID,
                "api_password": SMS_API_PASSWORD,
-               "sms_type": 'P',
-               "encoding": 'U',
+               "sms_type": 'T',
+               "encoding": 'T',
                "sender_id": 'mavideniste',
                "phonenumber": phone_number,
                "textmessage": 'Dogrulama kodunuz: '+code,
