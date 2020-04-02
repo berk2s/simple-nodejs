@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "mavideniste-ios-push",
+  "private_key_id": "02d79cf067e0058a845eaff55dfc7be0700a9736",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDMJE8y4Sr/EIYt\nYoDlZEi3ToQTcyyh/WQ9g9ImLKWZRdqd8YiPuvAWwFIafUck97kY00okeVDiwNaA\nE4MYvqPZYR22yDcK24c2rSfYdk+DPcjgyju2kmI8a5Tf/07xFbkIGsoUBLYIOaDv\nF1SOipK9FExy9vUElY8brMSb74TDSm5bR4NBJLfUlOonff+sPFuIhU3P1vav9vHx\no0DqlbRe9PsYP6+k/Frzya0TH8/HBeyxV1kmB1TxLzplB/1SQh0OE7/tnMxZgHVu\nDXz7Lm/UfdmlaN3rU+Hhg6mt/Z4GjdmGv5y0DxRWZMS09Z4VygfQ7hqbFM/DC4wt\nlK8XjHPLAgMBAAECggEAWrWTn5cgJOBxzr7jaYrLKPCxjXbzETPoE9F8Uswp9VZt\n0xrdRIibYHCqyux57XpJ/Db+zgA+KdPoPFbvPNKROemGa47Brohnp6r/dpbzs+yD\nUydpqzGWhySCrZnjuQqfAnPs8UI6pKL+2N60CvaWR4A6jCciLpxKT9DQOD4Q7zla\n/yqFX6KsxRpuMLHwkDJcJu7cI2Y4Dil3wRmifg5+mEKkGfVId2GjyF+yykWA65a5\nQd3FqoLDzkLjWPcTfEA6PyuNbZFm1Ot0P6Un4Q9trkcIcsrWQfY3huDG94Jb8bMC\nKPMuAR8oQgqgyx1gpzBSjPNSPu+Ge3Uzgayh7NkJcQKBgQD0N0xmdFJJ/j8f8TeC\nAFQyJZPn5TPa3RQzhowXXBD6eUo320njwWwNQHGN38POEahJBPDx3SmcwT2Atz6t\n0kTr3zClM5fLBbbyxfM+clr1cneAXIcXPfwwEjP0bvX2exFJaBdlUqvcUlhOBmLn\nlKhq/yTPQwhl1TxPvIanluD7OQKBgQDV/f2oOPVgzWJbug8G3HfxUwXEGZzT9qs9\nIB5Cms7qapMe54kX2GX3DqjxrDtWhbahjLVilDoMLyWfGLBZZUjnYUdDQqz6czHN\n4StmRrl8Ucpe7hQBwzgNQsJ5gm1Ke9tUhszLsqz4n3JRBiEH67rko4eZH6XmO4Yf\nWEWio+vzIwKBgCRbuz8hoEKt3H4H7oinPeG9YHjM0dyKv4AwTtkHduujdR49wpFq\n8YhDiORjZQZf8Jr2ZlzL3W8eAecQ4P8F6Abp0pc1yCqMrkEUoXMxmUMjiJEOtXoL\nW2lYvG1uu6W3ispP+fO2zClgBQ+QudbadfyAAd3tj+mBRppkafO3bcVZAoGBALIw\naYQmycztuTWAXPrtosLEy0xbt4eZI0Ym9IuptRrl29QkILhGbcGn5242aMLHXShw\nrqmDnEKBD+bG/DG0cVyaWGjdoIR8X8B7+1OTGOk4gjdCME63bHk+WgosXS1krWJZ\nTTdhdT8iJmLpo5+g32N7+HG9NLveXPTE4FdqABPZAoGARv8YEUcla74+bp2k6pTB\nP/HNJn/f4HA+IgkxrUmG2VWIi9kJttY1+DZhu7J0JRRdAsUExYT8JgLz72M2pvna\nRlCCk2/I/KA10uqa0HykcM+YUNRiFp8UIttbA79zCEv3azqlBHtJUa3gB6Qfyzwf\nH5+zza08SH88381BBj2ZeHo=\n-----END PRIVATE KEY-----\n",
+  "client_email": "mavideniste-ios-push@appspot.gserviceaccount.com",
+  "client_id": "115676641102888943994",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mavideniste-ios-push%40appspot.gserviceaccount.com"
+}

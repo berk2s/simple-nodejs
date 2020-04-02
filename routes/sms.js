@@ -10,9 +10,6 @@ router.post('/repass', async(req, res, next) => {
     try{
 
         const {phone_number, unique_key} = req.body;
-        const code = Math.floor(Math.random() * 1000000);
-
-        let textmessage = `Eğer şifre sıfırlama talebinde bulunmadıysanız dikkate almayın. Doğrulama kodu: ${code}`
 
 
         const keyCheck = await KeyModel.findOne({type:2, $or: [{key: unique_key}, {phone_number: phone_number}]});
@@ -29,6 +26,10 @@ router.post('/repass', async(req, res, next) => {
             console.log('here')
             return false;
         }else {
+
+            const code = Math.floor(Math.random() * 1000000);
+
+            let textmessage = `Eğer şifre sıfırlama talebinde bulunmadıysanız dikkate almayın. Doğrulama kodu:`
 
             const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
                 "api_id": SMS_API_ID,
