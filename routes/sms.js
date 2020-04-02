@@ -38,7 +38,7 @@ router.post('/repass', async(req, res, next) => {
                 "encoding": 'T',
                 "sender_id": 'mavideniste',
                 "phonenumber": phone_number,
-                "textmessage": 'Eğer şifre sıfırlama talebinde bulunmadıysanız dikkate almayın. Doğrulama kodu: '+code,
+                "textmessage": 'Doğrulama kodu: '+code,
             });
 
             console.log(sendSMS)
