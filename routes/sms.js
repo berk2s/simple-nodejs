@@ -29,7 +29,7 @@ router.post('/repass', async(req, res, next) => {
 
             const code = Math.floor(Math.random() * 1000000);
 
-            let textmessage = `Eğer şifre sıfırlama talebinde bulunmadıysanız dikkate almayın. Doğrulama kodu: ${code}`
+            let textmessage = 'Eğer şifre sıfırlama talebinde bulunmadıysanız dikkate almayın. Doğrulama kodu: '+code;
 
             const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
                 "api_id": SMS_API_ID,
@@ -38,7 +38,7 @@ router.post('/repass', async(req, res, next) => {
                 "encoding": 'T',
                 "sender_id": 'mavideniste',
                 "phonenumber": phone_number,
-                "textmessage": textmessage,
+                "textmessage": 'Eğer şifre sıfırlama talebinde bulunmadıysanız dikkate almayın. Doğrulama kodu: '+code,
             });
 
             console.log(sendSMS)
