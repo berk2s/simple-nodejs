@@ -116,7 +116,7 @@ router.post('/newuser', async(req, res, next) => {
                "encoding": 'T',
                "sender_id": 'mavideniste',
                "phonenumber": phone_number,
-               "textmessage": 'Dogrulama kodunuz: '+code,
+               "textmessage": 'Doğrulama kodu: '+code,
            });
 
            const keyToDB = new KeyModel({
