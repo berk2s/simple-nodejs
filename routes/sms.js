@@ -92,16 +92,6 @@ router.post('/newuser', async(req, res, next) => {
    try{
 
        const {phone_number, unique_key} = req.body;
-       const code = Math.floor(Math.random() * 1000000);
-
-       let textmessage = `Mavidenİste'ye hoşgeldiniz. İyi alışverişler dileriz. Doğrulama kodunuz: ${code}`
-
-       const keyToDB = new KeyModel({
-           key: unique_key,
-           code: code,
-           phone_number:phone_number,
-           type:1,
-       });
 
        const keyCheck = await KeyModel.findOne({type:1, $or: [{key: unique_key}, {phone_number: phone_number}]});
 
@@ -117,7 +107,7 @@ router.post('/newuser', async(req, res, next) => {
            return false;
        }else {
 
-           const saveKey = await keyToDB.save();
+           const code = Math.floor(Math.random() * 1000000);
 
            const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
                "api_id": SMS_API_ID,
@@ -126,10 +116,18 @@ router.post('/newuser', async(req, res, next) => {
                "encoding": 'T',
                "sender_id": 'mavideniste',
                "phonenumber": phone_number,
-               "textmessage": textmessage,
+               "textmessage": 'Mavidenİste\'ye hoşgeldiniz. İyi alışverişler dileriz. Doğrulama kodunuz: '+code,
+           });
+
+           const keyToDB = new KeyModel({
+               key: unique_key,
+               code: code,
+               phone_number:phone_number,
+               type:1,
            });
 
 
+           const saveKey = await keyToDB.save();
 
            let startTime = new Date(Date.now() + 120000);
            let endTime = new Date(startTime.getTime() + 5000);
