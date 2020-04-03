@@ -38,7 +38,7 @@ router.post('/repass', async(req, res, next) => {
                 "encoding": 'T',
                 "sender_id": 'mavideniste',
                 "phonenumber": phone_number,
-                "textmessage": 'Doğrulama kodu: '+code,
+                "textmessage": 'Onay kodu: '+code,
             });
 
             console.log(sendSMS)
@@ -116,7 +116,7 @@ router.post('/newuser', async(req, res, next) => {
                "encoding": 'T',
                "sender_id": 'mavideniste',
                "phonenumber": phone_number,
-               "textmessage": 'Doğrulama kodu: '+code,
+               "textmessage": 'Onay kodu: '+code,
            });
 
            const keyToDB = new KeyModel({
