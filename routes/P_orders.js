@@ -446,11 +446,12 @@ router.put('/status/prepare', cors(corsOptions), async (req, res, next) => {
         const token = findUser.token;
 
         if(token != null) {
-
             var message = {
                 data: {
                     score: '850',
-                    time: '2:45'
+                    time: '2:45',
+                    title: title,
+                    body: text
                 },
                 notification: {
                     title: title,
@@ -502,7 +503,9 @@ router.put('/status/enroute', cors(corsOptions), async (req, res, next) => {
             var message = {
                 data: {
                     score: '850',
-                    time: '2:45'
+                    time: '2:45',
+                    title: title,
+                    body: text
                 },
                 notification:{
                     title : title,
@@ -554,7 +557,9 @@ router.put('/status/successfull', cors(corsOptions), async (req, res, next) => {
             var message = {
                 data: {
                     score: '850',
-                    time: '2:45'
+                    time: '2:45',
+                    title: title,
+                    body: text
                 },
                 notification:{
                     title : title,
