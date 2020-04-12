@@ -25,7 +25,7 @@ router.get('/', async(req, res, next) => {
    }
 });
 
-router.get('/:branch_id', cors(corsOptions), async(req, res, next) => {
+router.get('/:branch_id',  async(req, res, next) => {
     try{
         const {branch_id} = req.params;
         const products = await Product.aggregate([
@@ -78,7 +78,7 @@ router.get('/:branch_id', cors(corsOptions), async(req, res, next) => {
             },
             {
                 $sort:{
-                    _id:-1,
+                    _id:1,
                 }
             }
         ]);
