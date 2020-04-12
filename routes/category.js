@@ -83,6 +83,55 @@ router.get('/:branch_id', cors(corsOptions), async (req, res, next) => {
     }
 });
 
+router.get('/v2/current/:branch_id', async (req, res, next) => {
+    const {branch_id} = req.params;
+    try{
+        const categories = await Category.aggregate([
+            {
+                $match:{
+                    branch_id: parseInt(branch_id)
+                }
+            },
+            {
+                $lookup:{
+                    from:'subcategories',
+                    foreignField:'category_id',
+                    localField:'_id',
+                    as:'subcategories'
+                }
+            },
+
+            {
+                $unwind:{
+                    path:'$category',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+
+            {
+                $sort:{
+                    _id:1,
+                }
+            }
+        ])
+        res.json({
+            data: categories,
+            status: {
+                state: true,
+                code: 'FBC_1'
+            }
+        });
+    }catch(e){
+        res.json({
+            data: e,
+            status: {
+                state: false,
+                code: 'FBC_0'
+            }
+        });
+    }
+});
+
 router.get('/current/:branch_id', async (req, res, next) => {
     const {branch_id} = req.params;
     try{
