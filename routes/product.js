@@ -34,6 +34,7 @@ router.get('/:branch_id',  async(req, res, next) => {
                     branch_id: parseInt(branch_id)
                 }
             },
+            { $sample: { size: 1 } },
             {
                 $lookup:{
                     from:'categories',
