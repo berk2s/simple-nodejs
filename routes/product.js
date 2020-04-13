@@ -28,13 +28,14 @@ router.get('/', async(req, res, next) => {
 router.get('/:branch_id',  async(req, res, next) => {
     try{
         const {branch_id} = req.params;
+        const doclength = await Product.find({branch_id: parseInt(branch_id)}).length;
         const products = await Product.aggregate([
             {
                 $match:{
                     branch_id: parseInt(branch_id)
                 }
             },
-            { $sample: { size: 1 } },
+            { $sample: { size: doclength } },
             {
                 $lookup:{
                     from:'categories',
