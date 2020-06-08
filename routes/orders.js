@@ -22,6 +22,7 @@ const {TIERED_START} = require('../constants/config');
 const Orders = require('../Models/Orders')
 const User = require('../Models/User')
 const Coupon = require('../Models/Coupon')
+const BranchStatus = require('../Models/BranchStatus')
 
 const mongoose = require('mongoose')
 
@@ -203,6 +204,31 @@ router.post('/', async (req, res, next) => {
             coupon,
             branch_id
         } = req.body;
+
+
+        const getBranchStatus = await BranchStatus.findOne({branch_id: branch_id})
+
+        if(getBranchStatus == null){
+            res.json({
+                data:'Geçersiz bilgiler içeriyor.Hata kodu: IBC_0',
+                status: {
+                    state: true,
+                    code: 'IO_E'
+                }
+            });
+            return false;
+        }
+
+        if(getBranchStatus.status == false){
+            res.json({
+                data:getBranchStatus.message,
+                status: {
+                    state: true,
+                    code: 'IO_0'
+                }
+            });
+            return false;
+        }
 
         const moment = require('moment');
         const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");

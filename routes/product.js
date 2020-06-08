@@ -107,7 +107,14 @@ router.get('/get/basket/:product_id', async (req, res, next) => {
             }
         })
     }catch(e){
-        res.json(e);
+        res.json({
+            data: null,
+            err: e,
+            status: {
+                state: true,
+                code: 'FP_1'
+            }
+        });
     }
 });
 
@@ -115,6 +122,7 @@ router.get('/get/:product_id', async (req, res, next) => {
     try{
         const {product_id} = req.params;
         const product = await Product.findOne({_id: product_id, product_status:true});
+
         res.json({
             data: product,
             status: {
@@ -123,7 +131,13 @@ router.get('/get/:product_id', async (req, res, next) => {
             }
         })
     }catch(e){
-        res.json(e);
+        res.json({
+            data: e,
+            status: {
+                state: true,
+                code: 'EE_1'
+            }
+        });
     }
 });
 

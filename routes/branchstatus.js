@@ -23,6 +23,7 @@ router.get('/:branch_id', async(req, res, next) => {
     try{
         const {branch_id} = req.params;
         const branchStatus = await BranchStatus.findOne({branch_id: branch_id});
+
         res.json({
             data: {
                 status:branchStatus.status,

@@ -10,6 +10,7 @@ const bcrypt = require('bcryptjs');
 // relevant model
 const User = require('../Models/User');
 const UserAddress = require('../Models/UserAddress');
+const ShoppingList = require('../Models/ShoppingList');
 
 //config
 const {PANEL_URL} = require('../constants/config');
@@ -285,5 +286,287 @@ router.put('/branch', async (req, res, next) => {
        });
    }
 });
+
+router.get('/shoppinglist/:user_id', async (req, res, next) => {
+    try{
+        const {user_id} = req.params;
+        const data = await ShoppingList.find({user_id : user_id}).sort({_id: -1});;
+        res.json({
+            data: data,
+            status: {
+                state: true,
+                code: 'FU_1'
+            }
+        })
+    }catch(e){
+        res.json({
+            data: e,
+            status: {
+                state: true,
+                code: 'FU_1'
+            }
+        })
+    }
+});
+
+router.post('/shoppinglist', async (req, res, next) => {
+    try{
+        const {user_id, products, list_name} = req.body;
+
+        const setValues = new ShoppingList({
+           user_id:user_id,
+           list_name:list_name,
+           products: products
+        });
+
+        const saveList = await setValues.save();
+
+        const shoppingLists = await ShoppingList.find({user_id:user_id});
+
+        res.json({
+            data: shoppingLists,
+            relevant_id:saveList._id,
+            state: {
+                status: true,
+                code: 'LS_1'
+            }
+        });
+
+    }catch(e){
+        res.json({
+            data: e,
+            state: {
+                status: true,
+                code: 'EE_1'
+            }
+        });
+    }
+})
+
+router.post('/shoppinglist/check/products', async(req,res, next) => {
+    try{
+        const {user_id, products} = req.body;
+        const findUsersList = await ShoppingList.find({user_id:user_id});
+
+        if(findUsersList.length > 0){
+            const checkerPromise = findUsersList.map(e => e.products).map(async e => {
+                return new Promise(async (resolve, reject) => {
+                    if(products.length == e.length){
+                        const checkPromise = products.map(r => r.id).map(a => {
+                            return new Promise((resolve, reject) => {
+                                if(e.map(t => t.id).indexOf(a) !== -1){
+                                    resolve({exists: true});
+                                }else{
+                                    resolve({exists: false});
+                                }
+                            });
+                        });
+                        const results = await Promise.all(checkPromise);
+                        if(results.filter(e => e.exists == true).length == products.length){
+                            resolve(false)
+                        }else{
+                            resolve(true);
+                        }
+                    }else{
+                        resolve(true);
+                    }
+                });
+            });
+            const checkerAll = await Promise.all(checkerPromise);
+            if(checkerAll.includes(false)){
+                res.json({
+                    data: 'Bu ürünlerden oluşan sepetiniz var',
+                    state: {
+                        status: true,
+                        code: 'CS_2'
+                    }
+                });
+            }else{
+                res.json({
+                    data: 'OK!',
+                    state: {
+                        status: true,
+                        code: 'CS_3'
+                    }
+                });
+            }
+        }else{
+            res.json({
+                data: e,
+                state: {
+                    status: true,
+                    code: 'CH_1'
+                }
+            });
+        }
+
+    }catch(e){
+        res.json({
+            data: e,
+            state: {
+                status: true,
+                code: 'EE_1'
+            }
+        });
+    }
+})
+
+router.post('/shoppinglist/check', async (req, res, next) => {
+   try{
+       const { user_id, list_name, products } = req.body;
+
+       const checkLength = await ShoppingList.find({user_id:user_id});
+
+       if(checkLength.length == 10){
+           res.json({
+               data: 'En fazla 10 tane liste oluşturabilirsiniz',
+               state: {
+                   status: true,
+                   code: 'CS_0'
+               }
+           });
+           return false;
+       }
+
+       const checkName = await ShoppingList.findOne({user_id:user_id, list_name: list_name});
+
+       if(checkName == null) {
+           res.json({
+               data: 'Kullanılabilir isim',
+               state: {
+                   status: true,
+                   code: 'CS_1'
+               }
+           });
+
+       }else{
+           res.json({
+               data: 'Bu isimde alışveriş listeniz var',
+               state: {
+                   status: true,
+                   code: 'CS_0'
+               }
+           });
+       }
+
+   } catch(e) {
+       res.json({
+           data: e,
+           state: {
+               status: true,
+               code: 'EE_1'
+           }
+       });
+   }
+});
+
+router.post('/shoppinglist/check2', async (req, res, next) => {
+   try{
+       const { user_id, list_name } = req.body;
+
+       const checkName = await ShoppingList.findOne({user_id:user_id, list_name: list_name});
+
+       if(checkName == null) {
+           res.json({
+               data: 'Kullanılabilir isim',
+               state: {
+                   status: true,
+                   code: 'CS_1'
+               }
+           });
+
+       }else{
+           res.json({
+               data: 'Bu isimde alışveriş listeniz var',
+               state: {
+                   status: true,
+                   code: 'CS_0'
+               }
+           });
+       }
+
+   } catch(e) {
+       res.json({
+           data: e,
+           state: {
+               status: true,
+               code: 'EE_1'
+           }
+       });
+   }
+});
+
+router.delete('/shoppinglist/:user_id/:shoppinglist_id', async (req, res, next) => {
+    try{
+        const {user_id, shoppinglist_id} = req.params;
+        await ShoppingList.findByIdAndDelete(shoppinglist_id);
+        const list = await ShoppingList.find({user_id: user_id}).sort({_id: -1});
+        res.json({
+            data: list,
+            status: {
+                state: true,
+                code: 'DS_1'
+            }
+        });
+    }catch(e){
+        res.json({
+            data: e,
+            status: {
+                state: true,
+                code: 'EE_1'
+            }
+        });
+    }
+})
+
+router.put('/shoppinglist/product', async (req, res, next) => {
+    try{
+        const {shopping_id, products, user_id} = req.body;
+        const update = await ShoppingList.updateOne({_id:shopping_id}, {
+            products: products
+        }, );
+        console.log(products)
+        const shoppingLists = await ShoppingList.find({user_id:user_id});
+        res.json({
+            data:shoppingLists,
+            status:{
+                code:'US_1',
+                state:true
+            }
+        })
+    } catch(e){
+        res.json({
+            data:'error',
+            status:{
+                code:'EE_1',
+                state:true
+            }
+        });
+    }
+})
+
+router.put('/shoppinglist/name', async (req, res, next) => {
+    try{
+        const {shopping_id, list_name, user_id} = req.body;
+        const update = await ShoppingList.updateOne({_id:shopping_id}, {
+            list_name: list_name
+        }, );
+        res.json({
+            data:update,
+            status:{
+                code:'US_1',
+                state:true
+            }
+        })
+    } catch(e){
+        res.json({
+            data:'error',
+            status:{
+                code:'EE_1',
+                state:true
+            }
+        });
+    }
+})
 
 module.exports = router;

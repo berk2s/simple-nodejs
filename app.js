@@ -25,6 +25,7 @@ const ordersPRouter = require('./routes/P_orders')
 const newsRouter = require('./routes/news')
 const statementRouter = require('./routes/statement')
 const branchStatus = require('./routes/branchstatus')
+const logRouter = require('./routes/log')
 
 
 //middlewares
@@ -61,6 +62,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', apikeyMiddleware, indexRouter);
 app.use('/api/category',  categoryRouter);
 app.use('/api/brand',  brandRouter);
+app.use('/api/log',  logRouter);
 app.use('/api/product',  productRouter);
 app.use('/api/notification',  notificationRouter);
 
