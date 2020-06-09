@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const axios = require('axios')
+var schedule = require('node-schedule');
 
 //config
 const {PANEL_URL} = require('../constants/config');
@@ -268,6 +270,28 @@ router.post('/', async (req, res, next) => {
         socketApi.io.emit('newOrder', {order: saveNewOrder});
 
         const userDetailsForSMS = await User.findOne({_id: user_id});
+
+        let amountText = is_bluecurrier != false ? 'MaviKurye' : products.length+' adet';
+        let priceText = is_bluecurrier != false ? 'Tutar: MaviKurye' : 'Tutar: ' +price;
+
+        let startTime = new Date(Date.now() + 12000);
+        let endTime = new Date(startTime.getTime() + 5000);
+        const nowTime = ''+Date.now()
+        var j = schedule.scheduleJob(nowTime, { start: startTime, end: endTime, rule: '*/1 * * * * *' }, async function(){
+
+            const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
+                "api_id": SMS_API_ID,
+                "api_password": SMS_API_PASSWORD,
+                "sms_type": 'T',
+                "encoding": 'T',
+                "sender_id": 'mavideniste',
+                "phonenumber": '905330773554',
+                "textmessage": `Yeni Siparis Var, Islem Yap !\nMusteri: ${userDetailsForSMS.name_surname} \n`,
+            });
+
+            schedule.cancelJob(nowTime);
+
+        });
 
 
         res.json({
