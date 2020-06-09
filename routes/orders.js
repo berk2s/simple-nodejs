@@ -276,7 +276,7 @@ router.post('/', async (req, res, next) => {
             "encoding": 'T',
             "sender_id": 'mavideniste',
             "phonenumber": '905396861440',
-            "textmessage": `Yeni Siparis Var, Islem Yap ! Musteri: ${userDetailsForSMS.name_surname} \n Tutar: ${price} TL`,
+            "textmessage": `Yeni Siparis Var, Islem Yap !`,
         });
 
         res.json({
