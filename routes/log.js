@@ -76,7 +76,7 @@ router.get('/today', cors(corsOptions), async (req, res, next) => {
 router.get('/:user_id', cors(corsOptions), async (req, res, next) => {
     try{
         const {user_id} = req.params;
-        const result = await Log.find({user_id:user_id});
+        const result = await Log.find({user_id:user_id}).sort({_id:-1});
         res.json({
             data:result
         });
