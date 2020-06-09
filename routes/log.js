@@ -15,6 +15,76 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
+router.get('/between/:back', cors(corsOptions), async (req, res, next) => {
+    try{
+        const { back } = req.params;
+        const moment = require('moment-timezone');
+        const startDate_TypeDate = new Date();
+        const finishDate_TypeDate= new Date();
+        startDate_TypeDate.setDate(new Date().getDate()-(back))
+        startDate_TypeDate.setHours(new Date().getHours()-(new Date().getHours()))
+        finishDate_TypeDate.setDate(new Date().getDate())
+        const { _d : startDate} = moment.tz(new Date(startDate_TypeDate), "Europe/Istanbul");
+        const { _d : finishDate} = moment.tz(finishDate_TypeDate, "Europe/Istanbul");
+        const result = await Log.find({
+            created_at: {
+                $gte:startDate, // >=
+                $lte:finishDate // <=
+            }
+        });
+        res.json({
+            data:result
+        });
+    }catch(e){
+        res.json(e);
+    }
+})
+
+router.get('/today', cors(corsOptions), async (req, res, next) => {
+    try{
+        const moment = require('moment-timezone');
+        const startDate_TypeDate = new Date();
+        const finishDate_TypeDate = new Date();
+        startDate_TypeDate.setDate(new Date().getDate())
+        startDate_TypeDate.setHours(0)
+        startDate_TypeDate.setMinutes(0)
+        startDate_TypeDate.setSeconds(0)
+        startDate_TypeDate.setMilliseconds(0)
+        finishDate_TypeDate.setHours(23);
+        finishDate_TypeDate.setMinutes(59);
+        finishDate_TypeDate.setSeconds(59);
+        finishDate_TypeDate.setMilliseconds(99)
+        finishDate_TypeDate.setDate(new Date().getDate())
+        const { _d : startDate} = moment.tz(startDate_TypeDate, "Europe/Istanbul");
+        const { _d : finishDate} = moment.tz(finishDate_TypeDate, "Europe/Istanbul");
+
+        const {user_id} = req.params;
+        const result = await Log.find({
+            created_at:{
+                $gte:startDate,
+                $lte:finishDate,
+            }
+        });
+        res.json({
+            data:result
+        });
+    }catch(e){
+        res.json(e);
+    }
+});
+
+router.get('/:user_id', cors(corsOptions), async (req, res, next) => {
+    try{
+        const {user_id} = req.params;
+        const result = await Log.find({user_id:user_id});
+        res.json({
+            data:result
+        });
+    }catch(e){
+        res.json(e);
+    }
+});
+
 router.post('/',  async (req, res, next) => {
     try{
         const {data, name_surname, user_id} = req.body;
