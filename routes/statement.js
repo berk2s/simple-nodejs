@@ -14,9 +14,9 @@ const Order = require('../Models/Orders')
 const Category = require('../Models/Category')
 const Product = require('../Models/Product')
 
-router.get('/weekly', cors(corsOptions), async (req, res, next) => {
+router.get('/weekly/:branch', cors(corsOptions), async (req, res, next) => {
     try{
-        const { day } = req.params;
+        const { branch } = req.params;
 
         const moment = require('moment-timezone');
 
@@ -39,7 +39,8 @@ router.get('/weekly', cors(corsOptions), async (req, res, next) => {
                     $lte:finishDate // <=
                 },
             order_status:3,
-            is_bluecurrier:false
+            is_bluecurrier:false,
+            branch_id: branch
         }).sort({order_date:-1});
 
         const today = new Date();
@@ -88,11 +89,10 @@ router.get('/weekly', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-
-router.get('/category/all', cors(corsOptions), async (req, res, next) => {
+router.get('/category/all/:branch_id', cors(corsOptions), async (req, res, next) => {
     try{
 
-        const result = await Order.find({order_status:3, is_bluecurrier:false});
+        const result = await Order.find({order_status:3, is_bluecurrier:false, branch_id: req.body.branch_id});
 
         const orderProducts = []
 
@@ -132,10 +132,10 @@ router.get('/category/all', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.get('/product/all', cors(corsOptions), async (req, res, next) => {
+router.get('/product/all/:branch_id', cors(corsOptions), async (req, res, next) => {
     try{
 
-        const result = await Order.find({order_status:3, is_bluecurrier:false});
+        const result = await Order.find({order_status:3, is_bluecurrier:false, branch_id: req.params.branch_id});
 
         const orderProducts = []
 
@@ -149,7 +149,7 @@ router.get('/product/all', cors(corsOptions), async (req, res, next) => {
 
         const orderProductsWithID = orderProducts.map(e => e.id);
 
-        const products = await Product.find({});
+        const products = await Product.find({branch_id: req.params.branch_id});
 
         const productsName = [];
         const satisMiktarLenght = []
@@ -176,7 +176,7 @@ router.get('/product/all', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.get('/totalorder', cors(corsOptions), async(req, res, next) => {
+router.get('/totalorder/:branch_id', cors(corsOptions), async(req, res, next) => {
     try{
         const moment = require('moment-timezone');
 
@@ -199,7 +199,8 @@ router.get('/totalorder', cors(corsOptions), async(req, res, next) => {
                     $lte:finishDate // <=
                 },
             order_status:3,
-            is_bluecurrier:false
+            is_bluecurrier:false,
+            branch_id:req.params.branch_id
         }).sort({order_date:-1});
 
         const today = new Date();
