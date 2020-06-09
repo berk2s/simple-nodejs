@@ -69,7 +69,7 @@ router.get('/history/:branch_id', cors(corsOptions), async (req, res, next) => {
                         user_address:'$user_address',
                         order_history_success:'$order_history_success',
                         order_history_enroute:'$order_history_enroute',
-                        order_history_prepare:'$order_history_enroute',
+                        order_history_prepare:'$order_history_prepare',
                         user_address:'$user_address',
                         branch_id:'$branch_id',
                         order_date:'$order_date',
@@ -95,7 +95,7 @@ router.get('/history/:branch_id', cors(corsOptions), async (req, res, next) => {
                     branch_id:'$_id.branch_id',
                     order_history_success:'$_id.order_history_success',
                     order_history_enroute:'$_id.order_history_enroute',
-                    order_history_prepare:'$_id.order_history_enroute',
+                    order_history_prepare:'$_id.order_history_prepare',
                     user:'$user'
                 }
             },
@@ -248,7 +248,7 @@ router.get('/user/history/:user_id', cors(corsOptions), async (req, res, next) =
                         user_address:'$user_address',
                         order_history_success:'$order_history_success',
                         order_history_enroute:'$order_history_enroute',
-                        order_history_prepare:'$order_history_enroute',
+                        order_history_prepare:'$order_history_prepare',
                         user_address:'$user_address',
                         branch_id:'$branch_id',
                         order_date:'$order_date',
@@ -274,7 +274,7 @@ router.get('/user/history/:user_id', cors(corsOptions), async (req, res, next) =
                     branch_id:'$_id.branch_id',
                     order_history_success:'$_id.order_history_success',
                     order_history_enroute:'$_id.order_history_enroute',
-                    order_history_prepare:'$_id.order_history_enroute',
+                    order_history_prepare:'$_id.order_history_prepare',
                     user:'$user'
                 }
             },
