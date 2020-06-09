@@ -92,7 +92,7 @@ router.get('/weekly/:branch', cors(corsOptions), async (req, res, next) => {
 router.get('/category/all/:branch_id', cors(corsOptions), async (req, res, next) => {
     try{
 
-        const result = await Order.find({order_status:3, is_bluecurrier:false, branch_id: req.body.branch_id});
+        const result = await Order.find({order_status:3, is_bluecurrier:false, branch_id: req.params.branch_id});
 
         const orderProducts = []
 
