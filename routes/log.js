@@ -45,9 +45,7 @@ router.get('/between/:back', cors(corsOptions), async (req, res, next) => {
             resultLog[6-i] = result.length;
         }
 
-        res.json({
-            data:resultLog
-        });
+        res.json(resultLog);
     }catch(e){
         res.json(e);
     }
