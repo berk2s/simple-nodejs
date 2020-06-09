@@ -26,6 +26,8 @@ const BranchStatus = require('../Models/BranchStatus')
 
 const mongoose = require('mongoose')
 
+const {SMS_API_ID, SMS_API_PASSWORD} = require('../constants/config')
+
 router.get('/user/open/:user_id', async (req, res, next) => {
     try{
         const {user_id} = req.params;
@@ -262,7 +264,20 @@ router.post('/', async (req, res, next) => {
             });
         }
         //
+
         socketApi.io.emit('newOrder', {order: saveNewOrder});
+
+        const userDetailsForSMS = await User.findOne({_id: user_id});
+
+        const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
+            "api_id": SMS_API_ID,
+            "api_password": SMS_API_PASSWORD,
+            "sms_type": 'T',
+            "encoding": 'T',
+            "sender_id": 'mavideniste',
+            "phonenumber": '905396861440',
+            "textmessage": `Yeni Siparis Var, Islem Yap ! Musteri: ${userDetailsForSMS.name_surname} \n Tutar: ${price} TL`,
+        });
 
         res.json({
             data: saveNewOrder,
