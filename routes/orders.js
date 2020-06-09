@@ -277,12 +277,12 @@ router.post('/', async (req, res, next) => {
         var j = schedule.scheduleJob(nowTime, { start: startTime, end: endTime, rule: '*/1 * * * * *' }, async function(){
 
             const sendSMS = await axios.post('http://api.smsala.com/api/SendSMS', {
-                "api_id": SMS_API_ID,
-                "api_password": SMS_API_PASSWORD,
+                "api_id": 'qwww',
+                "api_password": 'eee',
                 "sms_type": 'T',
                 "encoding": 'T',
-                "sender_id": 'mavideniste',
-                "phonenumber": 'asdsadasdsa',
+                "sender_id": 'aaa',
+                "phonenumber": 'asdasd',
                 "textmessage": `Yeni Siparis Var, Islem Yap !\nMusteri: ${userDetailsForSMS.name_surname} \n`,
             });
 
