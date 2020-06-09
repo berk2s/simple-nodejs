@@ -156,7 +156,10 @@ router.get('/product/all/:branch_id', cors(corsOptions), async (req, res, next) 
 
         const urunMiktari = [];
 
+        const Total = []
+
         products.map(pro => {
+
                 productsName.push(pro.product_name);
 
                 const satisMiktari = orderProductsWithID.filter(e => e == '' + pro._id).length;
@@ -164,12 +167,15 @@ router.get('/product/all/:branch_id', cors(corsOptions), async (req, res, next) 
                 satisMiktarLenght.push(satisMiktari);
 
                 urunMiktari.push(pro.product_amonut);
+
+                 Total.push([pro.product_name, satisMiktari]);
+
         });
 
         console.log(satisMiktarLenght)
         console.log(urunMiktari)
 
-        res.json({lengths: satisMiktarLenght, names: productsName, productlengths: urunMiktari})
+        res.json({total:Total, lengths: satisMiktarLenght, names: productsName, productlengths: urunMiktari})
 
     }catch(e){
         console.log(e)
