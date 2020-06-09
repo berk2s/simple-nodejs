@@ -271,9 +271,6 @@ router.post('/', async (req, res, next) => {
 
         const userDetailsForSMS = await User.findOne({_id: user_id});
 
-        let amountText = is_bluecurrier != false ? 'MaviKurye' : products.length+' adet';
-        let priceText = is_bluecurrier != false ? 'Tutar: MaviKurye' : 'Tutar: ' +price;
-
         let startTime = new Date(Date.now() + 12000);
         let endTime = new Date(startTime.getTime() + 5000);
         const nowTime = ''+Date.now()
@@ -285,7 +282,7 @@ router.post('/', async (req, res, next) => {
                 "sms_type": 'T',
                 "encoding": 'T',
                 "sender_id": 'mavideniste',
-                "phonenumber": '905330773554',
+                "phonenumber": 'asdsadasdsa',
                 "textmessage": `Yeni Siparis Var, Islem Yap !\nMusteri: ${userDetailsForSMS.name_surname} \n`,
             });
 
