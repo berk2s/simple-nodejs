@@ -21,7 +21,7 @@ router.get('/between/:back', cors(corsOptions), async (req, res, next) => {
         const moment = require('moment-timezone');
         const resultLog = [0, 0, 0, 0, 0, 0, 0];
 
-        for(let i = 0; i<7; i++) {
+        for(let i = 0; i<back; i++) {
             const startDate_TypeDate = new Date();
             const finishDate_TypeDate = new Date();
             startDate_TypeDate.setDate(new Date().getDate() - (i))
