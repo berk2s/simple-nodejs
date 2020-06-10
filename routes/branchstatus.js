@@ -8,7 +8,7 @@ const BranchStatus = require('../Models/BranchStatus');
 
 //config
 const {PANEL_URL} = require('../constants/config');
-
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
 //cors
 var cors = require("cors");
 
@@ -17,9 +17,12 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+const bothMid = require('../middleware/bothmid')
+
+
 const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
 
-router.get('/:branch_id', async(req, res, next) => {
+router.get('/:branch_id', bothMid, async(req, res, next) => {
     try{
         const {branch_id} = req.params;
         const branchStatus = await BranchStatus.findOne({branch_id: branch_id});
@@ -45,7 +48,7 @@ router.get('/:branch_id', async(req, res, next) => {
     }
 });
 
-router.post('/', cors(corsOptions), async(req, res, next) => {
+router.post('/', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const timeZone = dateTurkey._d;
         const {branch_id, status, message} = req.body;
@@ -78,7 +81,7 @@ router.post('/', cors(corsOptions), async(req, res, next) => {
     }
 });
 
-router.put('/', cors(corsOptions), async(req, res, next) => {
+router.put('/', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const {branch_id, message} = req.body;
         const branchStatus = await BranchStatus.findOneAndUpdate({branch_id: branch_id},{
@@ -102,7 +105,7 @@ router.put('/', cors(corsOptions), async(req, res, next) => {
     }
 });
 
-router.put('/open', cors(corsOptions), async(req, res, next) => {
+router.put('/open', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const {branch_id} = req.body;
         const branchStatus = await BranchStatus.findOneAndUpdate({branch_id: branch_id},{
@@ -126,7 +129,7 @@ router.put('/open', cors(corsOptions), async(req, res, next) => {
     }
 });
 
-router.put('/close', cors(corsOptions), async(req, res, next) => {
+router.put('/close', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const {branch_id, message} = req.body;
         const branchStatus = await BranchStatus.findOneAndUpdate({branch_id: branch_id},{
@@ -151,7 +154,7 @@ router.put('/close', cors(corsOptions), async(req, res, next) => {
     }
 });
 
-router.delete('/', cors(corsOptions), async(req, res, next) => {
+router.delete('/', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         await BranchStatus.deleteOne({branch_id: req.body.branch_id});
         res.json({});

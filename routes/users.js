@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const tokenVerifyMiddleware = require('../middleware/token-verify');
 
 // jwt
 const jwt = require('jsonwebtoken');
@@ -23,7 +24,13 @@ var corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
-router.get('/', cors(corsOptions), async (req, res, next) => {
+router.get('/validator/:user_id', tokenVerifyMiddleware, async (req, res, next) => {
+    res.json({})
+})
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
+const bothMid = require('../middleware/bothmid')
+
+router.get('/', apikeyPanelMiddleware, async (req, res, next) => {
   try{
       const data = await User.find({});
       res.json({
@@ -38,7 +45,7 @@ router.get('/', cors(corsOptions), async (req, res, next) => {
   }
 });
 
-router.get('/detail/:user_id', async (req, res, next) => {
+router.get('/detail/:user_id', tokenVerifyMiddleware, async (req, res, next) => {
    try{
        const {user_id} = req.params;
        const user = await User.findOne({_id : user_id});
@@ -54,7 +61,7 @@ router.get('/detail/:user_id', async (req, res, next) => {
    }
 });
 
-router.put('/name', async (req, res, next) => {
+router.put('/name', tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {user_id, name_surname} = req.body;
         const user = await User.findByIdAndUpdate(user_id, {
@@ -108,7 +115,7 @@ router.put('/permission/sms', async (req, res, next) => {
     }
 })
 
-router.get('/address/:user_id', async (req, res , next) => {
+router.get('/address/:user_id', tokenVerifyMiddleware, async (req, res) => {
     try{
         const {user_id} = req.params
         const address = await UserAddress.find({user_id: user_id}).sort({_id: -1});
@@ -124,7 +131,7 @@ router.get('/address/:user_id', async (req, res , next) => {
     }
 });
 
-router.post('/address', async (req, res ,next) => {
+router.post('/address', tokenVerifyMiddleware, async (req, res ,next) => {
     try{
         const {address_ltd, address_lng, user_id, address_title, address_province, address_county, address, address_direction} = req.body;
         const addAddress = new UserAddress({
@@ -151,7 +158,7 @@ router.post('/address', async (req, res ,next) => {
     }
 })
 
-router.delete('/address/:user_id/:address_id', async (req, res, next) => {
+router.delete('/address/:user_id/:address_id', tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {user_id, address_id} = req.params;
         await UserAddress.findByIdAndDelete(address_id);
@@ -168,7 +175,7 @@ router.delete('/address/:user_id/:address_id', async (req, res, next) => {
     }
 })
 
-router.put('/address' , async (req, res, next) => {
+router.put('/address' , tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {id, user_id, address_title, address_province, address_county, address, address_direction} = req.body;
         const update = await UserAddress.findByIdAndUpdate(id, {
@@ -211,11 +218,11 @@ router.put('/token', async (req, res, next) => {
     }
 })
 
-router.put('/password', async (req, res, next) => {
+router.put('/password', tokenVerifyMiddleware, async (req, res, next) => {
     try{
-        const {currentpassword, newpassword, userid} = req.body;
+        const {currentpassword, newpassword, user_id} = req.body;
 
-        const user = await User.findOne({_id:userid});
+        const user = await User.findOne({_id:user_id});
 
         bcrypt.compare(currentpassword, user.password)
             .then((result) => {
@@ -223,7 +230,7 @@ router.put('/password', async (req, res, next) => {
 
                     bcrypt.genSalt(10, (err, salt) => {
                         bcrypt.hash(newpassword, salt, async (err, hash) => {
-                            const findUser = await User.findByIdAndUpdate(userid, {
+                            const findUser = await User.findByIdAndUpdate(user_id, {
                                 password: hash
                             });
                             res.json({
@@ -263,7 +270,7 @@ router.put('/password', async (req, res, next) => {
     }
 })
 
-router.put('/branch', async (req, res, next) => {
+router.put('/branch', tokenVerifyMiddleware, async (req, res, next) => {
    try{
        const {user_id, branch} = req.body;
        const update = await User.updateOne({_id:user_id}, {
@@ -287,7 +294,7 @@ router.put('/branch', async (req, res, next) => {
    }
 });
 
-router.get('/shoppinglist/:user_id', async (req, res, next) => {
+router.get('/shoppinglist/:user_id', tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {user_id} = req.params;
         const data = await ShoppingList.find({user_id : user_id}).sort({_id: -1});;
@@ -309,7 +316,7 @@ router.get('/shoppinglist/:user_id', async (req, res, next) => {
     }
 });
 
-router.post('/shoppinglist', async (req, res, next) => {
+router.post('/shoppinglist', tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {user_id, products, list_name} = req.body;
 
@@ -343,7 +350,7 @@ router.post('/shoppinglist', async (req, res, next) => {
     }
 })
 
-router.post('/shoppinglist/check/products', async(req,res, next) => {
+router.post('/shoppinglist/check/products', tokenVerifyMiddleware, async(req,res, next) => {
     try{
         const {user_id, products} = req.body;
         const findUsersList = await ShoppingList.find({user_id:user_id});
@@ -411,7 +418,7 @@ router.post('/shoppinglist/check/products', async(req,res, next) => {
     }
 })
 
-router.post('/shoppinglist/check', async (req, res, next) => {
+router.post('/shoppinglist/check', tokenVerifyMiddleware, async (req, res, next) => {
    try{
        const { user_id, list_name, products } = req.body;
 
@@ -460,7 +467,7 @@ router.post('/shoppinglist/check', async (req, res, next) => {
    }
 });
 
-router.post('/shoppinglist/check2', async (req, res, next) => {
+router.post('/shoppinglist/check2', tokenVerifyMiddleware, async (req, res, next) => {
    try{
        const { user_id, list_name } = req.body;
 
@@ -496,7 +503,7 @@ router.post('/shoppinglist/check2', async (req, res, next) => {
    }
 });
 
-router.delete('/shoppinglist/:user_id/:shoppinglist_id', async (req, res, next) => {
+router.delete('/shoppinglist/:user_id/:shoppinglist_id', tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {user_id, shoppinglist_id} = req.params;
         await ShoppingList.findByIdAndDelete(shoppinglist_id);
@@ -519,7 +526,7 @@ router.delete('/shoppinglist/:user_id/:shoppinglist_id', async (req, res, next) 
     }
 })
 
-router.put('/shoppinglist/product', async (req, res, next) => {
+router.put('/shoppinglist/product', tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {shopping_id, products, user_id} = req.body;
         const update = await ShoppingList.updateOne({_id:shopping_id}, {
@@ -545,7 +552,7 @@ router.put('/shoppinglist/product', async (req, res, next) => {
     }
 })
 
-router.put('/shoppinglist/name', async (req, res, next) => {
+router.put('/shoppinglist/name', tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {shopping_id, list_name, user_id} = req.body;
         const update = await ShoppingList.updateOne({_id:shopping_id}, {

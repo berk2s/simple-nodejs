@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 const SubCategory = require('../Models/SubCategory')
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
+const bothMid = require('../middleware/bothmid')
 
-router.get('/:category_id', async (req, res, next) => {
+router.get('/:category_id', bothMid, async (req, res, next) => {
     try{
         const {category_id} = req.params;
         const subCategories = await SubCategory.find({category_id:category_id});
@@ -25,7 +27,7 @@ router.get('/:category_id', async (req, res, next) => {
     }
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {sub_category_name, category_id, branch_id} = req.body;
         const newSub = new SubCategory({

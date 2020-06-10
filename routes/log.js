@@ -14,8 +14,9 @@ var corsOptions = {
     origin: PANEL_URL,
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
 
-router.get('/between/:back', cors(corsOptions), async (req, res, next) => {
+router.get('/between/:back', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const { back } = req.params;
         const moment = require('moment-timezone');
@@ -51,7 +52,7 @@ router.get('/between/:back', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.get('/today', cors(corsOptions), async (req, res, next) => {
+router.get('/today', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const moment = require('moment-timezone');
         const startDate_TypeDate = new Date();
@@ -84,7 +85,7 @@ router.get('/today', cors(corsOptions), async (req, res, next) => {
     }
 });
 
-router.get('/:user_id', cors(corsOptions), async (req, res, next) => {
+router.get('/:user_id', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {user_id} = req.params;
         const result = await Log.find({user_id:user_id}).sort({_id:-1});

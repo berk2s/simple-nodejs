@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 //config
-const {API_KEY, PANEL_API_KEY} = require('./constants/config');
+const {API_KEY, NEW_API_KEY, PANEL_API_KEY} = require('./constants/config');
 
 //routers
 var indexRouter = require('./routes/index');
@@ -30,6 +30,7 @@ const logRouter = require('./routes/log')
 
 //middlewares
 const apikeyMiddleware = require('./middleware/apikeymid')
+const apikeyPanelMiddleware = require('./middleware/apikeypanel')
 const tokenVerifyMiddleware = require('./middleware/token-verify');
 
 var app = express();
@@ -42,6 +43,7 @@ const mongoose = require('./helper/db')();
 
 //api key
 app.set('API_KEY', API_KEY);
+app.set('NEW_API_KEY', NEW_API_KEY);
 app.set('PANEL_API_KEY', PANEL_API_KEY);
 
 //var schedule = require('node-schedule');/
@@ -59,16 +61,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', apikeyMiddleware, indexRouter);
+app.use('/', indexRouter);
 app.use('/api/category',  categoryRouter);
 app.use('/api/brand',  brandRouter);
 app.use('/api/log',  logRouter);
 app.use('/api/product',  productRouter);
 app.use('/api/notification',  notificationRouter);
 
-app.use('/api/orders',  tokenVerifyMiddleware, ordersRouter);
-app.use('/api/user',  tokenVerifyMiddleware, usersRouter);
-app.use('/api/coupon',  tokenVerifyMiddleware, couponRouter);
+app.use('/api/orders', ordersRouter);
+app.use('/api/user', usersRouter);
+app.use('/api/coupon', couponRouter);
 
 app.use('/api/sms', smsRouter);
 app.use('/api/campaign', campaignRouter);
@@ -82,9 +84,9 @@ app.use('/api/statement', statementRouter);
 
 app.use('/api/news',  newsRouter);
 
-app.use('/api/p/orders',  ordersPRouter);
-app.use('/api/p/user',  usersPRouter);
-app.use('/api/p/coupon',  couponPRouter);
+app.use('/api/p/orders',  apikeyPanelMiddleware, ordersPRouter);
+app.use('/api/p/user', apikeyPanelMiddleware, usersPRouter);
+app.use('/api/p/coupon',  apikeyPanelMiddleware, couponPRouter);
 
 
 

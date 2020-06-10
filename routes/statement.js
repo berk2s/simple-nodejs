@@ -14,7 +14,9 @@ const Order = require('../Models/Orders')
 const Category = require('../Models/Category')
 const Product = require('../Models/Product')
 
-router.get('/weekly/:branch', cors(corsOptions), async (req, res, next) => {
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
+
+router.get('/weekly/:branch', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const { branch } = req.params;
 
@@ -89,7 +91,7 @@ router.get('/weekly/:branch', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.get('/category/all/:branch_id', cors(corsOptions), async (req, res, next) => {
+router.get('/category/all/:branch_id', apikeyPanelMiddleware, async (req, res, next) => {
     try{
 
         const result = await Order.find({order_status:3, is_bluecurrier:false, branch_id: req.params.branch_id});
@@ -132,7 +134,7 @@ router.get('/category/all/:branch_id', cors(corsOptions), async (req, res, next)
     }
 })
 
-router.get('/product/all/:branch_id', cors(corsOptions), async (req, res, next) => {
+router.get('/product/all/:branch_id', apikeyPanelMiddleware, async (req, res, next) => {
     try{
 
         const result = await Order.find({order_status:3, is_bluecurrier:false, branch_id: req.params.branch_id});
@@ -182,7 +184,7 @@ router.get('/product/all/:branch_id', cors(corsOptions), async (req, res, next) 
     }
 })
 
-router.get('/totalorder/:branch_id', cors(corsOptions), async(req, res, next) => {
+router.get('/totalorder/:branch_id', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const moment = require('moment-timezone');
 

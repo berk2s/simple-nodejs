@@ -20,10 +20,11 @@ var corsOptions = {
     origin: PANEL_URL,
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
 
 const {TOPIC_EVERYBODY} = require('../constants/config')
 
-router.get('/topic', cors(corsOptions), async(req, res, next) => {
+router.get('/topic', apikeyPanelMiddleware, async(req, res, next) => {
     try{
 
         const groups = await UserGroups.find();
@@ -47,7 +48,7 @@ router.post('/subscribe', (req, res, next) => {
     res.json({})
 })
 
-router.post('/topic', cors(corsOptions), async (req, res, next) => {
+router.post('/topic', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {group_name, group_desc, group_branch, group_users, tokens} = req.body;
         const newGroup = new UserGroups({
@@ -81,7 +82,7 @@ router.post('/topic', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.post('/all/sms', async (req,res,next) => {
+router.post('/all/sms', apikeyPanelMiddleware, async (req,res,next) => {
     try{
         const {body, branch_id} = req.body;
         const users = await User.find({});
@@ -106,7 +107,7 @@ router.post('/all/sms', async (req,res,next) => {
     }
 })
 
-router.post('/sms', async (req,res,next) => {
+router.post('/sms', apikeyPanelMiddleware, async (req,res,next) => {
     try{
         const {body, branch_id} = req.body;
         const users = await User.find({user_branch: parseInt(branch_id)});
@@ -131,7 +132,7 @@ router.post('/sms', async (req,res,next) => {
     }
 })
 
-router.post('/sms/user', async (req,res,next) => {
+router.post('/sms/user', apikeyPanelMiddleware, async (req,res,next) => {
     try{
         const {body, phone_number} = req.body;
 
@@ -154,7 +155,7 @@ router.post('/sms/user', async (req,res,next) => {
     }
 })
 
-router.post('/all/push',  async (req, res, next) => {
+router.post('/all/push', apikeyPanelMiddleware,  async (req, res, next) => {
     try{
         const {title, body, group, branch_id} = req.body;
 
@@ -197,7 +198,7 @@ router.post('/all/push',  async (req, res, next) => {
     }
 });
 
-router.post('/push',  async (req, res, next) => {
+router.post('/push',  apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {title, body, group, branch_id} = req.body;
 
@@ -240,7 +241,7 @@ router.post('/push',  async (req, res, next) => {
     }
 });
 
-router.post('/push/user', async (req, res, next) => {
+router.post('/push/user', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {title, body, token} = req.body;
         console.log(token);
@@ -272,7 +273,7 @@ router.post('/push/user', async (req, res, next) => {
     }
 })
 
-router.post('/token', async(req, res, next) => {
+router.post('/token', apikeyPanelMiddleware, async(req, res, next) => {
     try {
         const {token, platform} = req.body;
 

@@ -221,7 +221,9 @@ router.post('/authenticate', async (req, res, next) => {
                 return false;
               }
 
-              const payload = {phone_number};
+              console.log('id ' + user._id)
+
+              const payload = {phone_number:phone_number, id:user._id};
 
               const token = jwt.sign(payload, req.app.get('API_KEY'), {
                 expiresIn: '365d'

@@ -20,8 +20,9 @@ var corsOptions = {
 var moment = require('moment');
 const momentTZ = require('moment-timezone');
 
+const tokenVerifyMiddleware = require('../middleware/token-verify');
 
-router.post('/validate', async (req, res, next) => {
+router.post('/validate', tokenVerifyMiddleware, async (req, res, next) => {
    try{
 
        const {coupon_name, user_id, total_price, products, branch_id} = req.body;

@@ -7,6 +7,8 @@ const News = require('../Models/News');
 
 const {PANEL_URL} = require('../constants/config')
 
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
+
 //cors
 var cors = require("cors");
 
@@ -15,7 +17,9 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-router.put('/changeimage', cors(corsOptions), async(req, res, next) => {
+const bothMid = require('../middleware/bothmid');
+
+router.put('/changeimage', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const {news_id, image} = req.body;
         console.log(news_id)
@@ -29,7 +33,7 @@ router.put('/changeimage', cors(corsOptions), async(req, res, next) => {
     }
 })
 
-router.delete('/', cors(corsOptions), async (req, res, next) => {
+router.delete('/', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const deleteIt = await News.deleteOne({_id: req.body.news_id});
         res.json({})
@@ -38,7 +42,7 @@ router.delete('/', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.get('/all/:branch_id', cors(corsOptions), async(req, res, next) => {
+router.get('/all/:branch_id', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const {branch_id} = req.params;
         const news = await News.find({branch_id:parseInt(branch_id)});
@@ -62,7 +66,7 @@ router.get('/all/:branch_id', cors(corsOptions), async(req, res, next) => {
     }
 })
 
-router.get('/:branch_id',  async(req, res, next) => {
+router.get('/:branch_id',  bothMid, async(req, res, next) => {
     try{
         const {branch_id} = req.params;
         const news = await News.find({branch_id:parseInt(branch_id), news_status:true})
@@ -88,7 +92,7 @@ router.get('/:branch_id',  async(req, res, next) => {
     }
 });
 
-router.post('/', cors(corsOptions), async (req, res, next) => {
+router.post('/', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {news_name, news_image, branch_id} = req.body;
 

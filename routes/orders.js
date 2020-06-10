@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios')
 var schedule = require('node-schedule');
+const tokenVerifyMiddleware = require('../middleware/token-verify');
 
 //config
 const {PANEL_URL} = require('../constants/config');
@@ -30,9 +31,10 @@ const mongoose = require('mongoose')
 
 const {SMS_API_ID, SMS_API_PASSWORD} = require('../constants/config')
 
-router.get('/user/open/:user_id', async (req, res, next) => {
+router.get('/user/open/:user_id', tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {user_id} = req.params;
+
         const openOrders = await Orders.aggregate([
             {
                 $match:{
@@ -114,9 +116,10 @@ router.get('/user/open/:user_id', async (req, res, next) => {
     }
 });
 
-router.get('/user/history/:user_id', async (req, res, next) => {
+router.get('/user/history/:user_id', tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {user_id} = req.params;
+
         const openOrders =  await Orders.aggregate([
             {
                 $match:{
@@ -195,7 +198,7 @@ router.get('/user/history/:user_id', async (req, res, next) => {
     }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', tokenVerifyMiddleware, async (req, res, next) => {
     try{
         const {
             user_id,
@@ -208,6 +211,7 @@ router.post('/', async (req, res, next) => {
             coupon,
             branch_id
         } = req.body;
+
 
 
         const getBranchStatus = await BranchStatus.findOne({branch_id: branch_id})
@@ -237,8 +241,7 @@ router.post('/', async (req, res, next) => {
         const moment = require('moment');
         const dateTurkey = moment.tz(Date.now(), "Europe/Istanbul");
 
-
-        const newOrder = new Orders({
+       const newOrder = new Orders({
             visibility_id:Date.now(),
             user_id:user_id,
             user_address:user_address,
@@ -291,7 +294,6 @@ router.post('/', async (req, res, next) => {
 
         });
 
-
         res.json({
             data: saveNewOrder,
             status: {
@@ -303,5 +305,7 @@ router.post('/', async (req, res, next) => {
         console.log(e);
     }
 })
+
+
 
 module.exports = router;

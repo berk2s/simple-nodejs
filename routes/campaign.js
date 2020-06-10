@@ -11,8 +11,10 @@ var corsOptions = {
     origin: PANEL_URL,
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
+const bothMid = require('../middleware/bothmid')
 
-router.delete('/', cors(corsOptions), async (req, res, next) => {
+router.delete('/', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {campaign_id} = req.body;
         await Campaign.deleteOne({_id: campaign_id});
@@ -22,7 +24,7 @@ router.delete('/', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.put('/', cors(corsOptions), async (req, res, next) => {
+router.put('/', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {campaign_id, campaign_name, campaign_short_desc, campaign_type, campaign_desc} = req.body;
         const update = await Campaign.updateOne({_id: campaign_id}, {
@@ -43,7 +45,7 @@ router.put('/', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.put('/changeimage', cors(corsOptions), async (req, res, next) => {
+router.put('/changeimage', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {campaign_id, image} = req.body;
         const update = await Campaign.updateOne({_id: campaign_id}, {
@@ -61,7 +63,7 @@ router.put('/changeimage', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.get('/:branch_id', async (req, res, next) => {
+router.get('/:branch_id', bothMid, async (req, res, next) => {
     try{
         console.log(req.params.branch_id)
         const campaigns = await Campaign.aggregate([
@@ -100,7 +102,7 @@ router.get('/:branch_id', async (req, res, next) => {
     }
 });
 
-router.get('/all/:branch_id', cors(corsOptions), async (req, res, next) => {
+router.get('/all/:branch_id', apikeyPanelMiddleware, async (req, res, next) => {
    try{
        const campaigns = await Campaign.aggregate([
            {
@@ -126,7 +128,7 @@ router.get('/all/:branch_id', cors(corsOptions), async (req, res, next) => {
    }
 });
 
-router.post('/', cors(corsOptions), async (req, res, next) => {
+router.post('/', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {
             campaign_name,

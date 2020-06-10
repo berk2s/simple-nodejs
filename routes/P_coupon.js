@@ -111,7 +111,7 @@ router.get('/:branch_id', cors(corsOptions), async (req, res, next) => {
     }
 });
 
-router.get('/', async (req, res, next) => {
+router.get('/', cors(corsOptions), async (req, res, next) => {
     try{
         const coupons = await P_coupon.find();
         res.json({
@@ -180,7 +180,7 @@ router.post('/', cors(corsOptions), async (req, res, next) => {
    }
 });
 
-router.get('/check/:coupon_name', async (req, res, next) => {
+router.get('/check/:coupon_name', cors(corsOptions), async (req, res, next) => {
     try{
         const {coupon_name} = req.params;
         const findIt = await P_coupon.find({coupon_name:coupon_name});
@@ -194,7 +194,7 @@ router.get('/check/:coupon_name', async (req, res, next) => {
     }
 })
 
-router.put('/test', async (req, res, next) => {
+router.put('/test', cors(corsOptions), async (req, res, next) => {
     try{
         const {coupon_id} = req.body;
         const relevantCoupon = await P_coupon.findOne({_id: coupon_id});

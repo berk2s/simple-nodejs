@@ -17,8 +17,10 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
+const bothMid = require('../middleware/bothmid')
 
-router.get('/', async (req, res, next) => {
+router.get('/', bothMid, async (req, res, next) => {
     try{
         const categories = await Category.find({});
         res.json({
@@ -39,7 +41,7 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.get('/p/get/:category_id', cors(corsOptions), async (req, res, next) => {
+router.get('/p/get/:category_id', apikeyPanelMiddleware, async (req, res, next) => {
     const {category_id} = req.params;
     try{
         const category = await Category.findById(category_id);
@@ -61,7 +63,7 @@ router.get('/p/get/:category_id', cors(corsOptions), async (req, res, next) => {
     }
 });
 
-router.get('/:branch_id', cors(corsOptions), async (req, res, next) => {
+router.get('/:branch_id', apikeyPanelMiddleware, async (req, res, next) => {
     const {branch_id} = req.params;
     try{
         const categories = await Category.find({branch_id});
@@ -83,7 +85,7 @@ router.get('/:branch_id', cors(corsOptions), async (req, res, next) => {
     }
 });
 
-router.get('/v2/current/:branch_id', async (req, res, next) => {
+router.get('/v2/current/:branch_id', bothMid, async (req, res, next) => {
     const {branch_id} = req.params;
     try{
         const categories = await Category.aggregate([
@@ -132,7 +134,7 @@ router.get('/v2/current/:branch_id', async (req, res, next) => {
     }
 });
 
-router.get('/current/:branch_id', async (req, res, next) => {
+router.get('/current/:branch_id', bothMid, async (req, res, next) => {
     const {branch_id} = req.params;
     try{
         const categories = await Category.find({branch_id: branch_id, status:true});
@@ -154,7 +156,7 @@ router.get('/current/:branch_id', async (req, res, next) => {
     }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', apikeyPanelMiddleware, async (req, res, next) => {
     const {category_name, category_image, branch_id} = req.body;
     try{
         const moment = require('moment');
@@ -179,7 +181,7 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-router.put('/p/edit', cors(corsOptions), async (req, res, next) => {
+router.put('/p/edit', apikeyPanelMiddleware, async (req, res, next) => {
     const {category_id, category_name, category_image, status, delete_subs} = req.body;
     try{
         const update = await Category.findByIdAndUpdate(category_id, {
@@ -214,7 +216,7 @@ router.put('/p/edit', cors(corsOptions), async (req, res, next) => {
     }
 });
 
-router.put('/p/edit/status', cors(corsOptions), async(req, res, next) => {
+router.put('/p/edit/status', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const {category_id, status} = req.body;
         const updatestatus = await Category.findByIdAndUpdate(category_id, {
@@ -235,7 +237,7 @@ router.put('/p/edit/status', cors(corsOptions), async(req, res, next) => {
     }
 });
 
-router.put('/p/delete/image', cors(corsOptions), async (req, res, next) => {
+router.put('/p/delete/image', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {category_id} = req.body;
         const result = await Category.findByIdAndUpdate(category_id, {
@@ -253,7 +255,7 @@ router.put('/p/delete/image', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.delete('/p/delete/:category_id', cors(corsOptions), async(req, res, next) => {
+router.delete('/p/delete/:category_id', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const {category_id} = req.params;
         const result = await Category.findByIdAndDelete(category_id);

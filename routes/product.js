@@ -14,8 +14,10 @@ var corsOptions = {
     origin: PANEL_URL,
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
 
 const mongoose = require('mongoose');
+const bothMid = require('../middleware/bothmid')
 
 router.get('/', async(req, res, next) => {
    try{
@@ -25,7 +27,7 @@ router.get('/', async(req, res, next) => {
    }
 });
 
-router.get('/:branch_id',  async(req, res, next) => {
+router.get('/:branch_id',  bothMid, async(req, res, next) => {
     try{
         const {branch_id} = req.params;
         const products = await Product.aggregate([
@@ -95,7 +97,7 @@ router.get('/:branch_id',  async(req, res, next) => {
     }
 });
 
-router.get('/get/basket/:product_id', async (req, res, next) => {
+router.get('/get/basket/:product_id',bothMid, async (req, res, next) => {
     try{
         const {product_id} = req.params;
         const product = await Product.findOne({_id: product_id, product_status:true});
@@ -118,7 +120,7 @@ router.get('/get/basket/:product_id', async (req, res, next) => {
     }
 });
 
-router.get('/get/:product_id', async (req, res, next) => {
+router.get('/get/:product_id', bothMid, async (req, res, next) => {
     try{
         const {product_id} = req.params;
         const product = await Product.findOne({_id: product_id, product_status:true});
@@ -141,7 +143,7 @@ router.get('/get/:product_id', async (req, res, next) => {
     }
 });
 
-router.get('/get/:branch_id/:category_id', async(req, res, next) => {
+router.get('/get/:branch_id/:category_id', bothMid, async(req, res, next) => {
    try{
        const {branch_id, category_id} = req.params;
        const datas = await Product.find({branch_id: branch_id, category_id: category_id});
@@ -157,7 +159,7 @@ router.get('/get/:branch_id/:category_id', async(req, res, next) => {
    }
 });
 
-router.post('/', cors(corsOptions), async (req, res, next) => {
+router.post('/', apikeyPanelMiddleware, async (req, res, next) => {
 
    try{
        const {product_image, product_amonut, sub_category_id, product_unit_weight, product_unit_type, branch_id, category_id, brand_id, product_name, product_list_price, product_discount_price, product_discount} = req.body;
@@ -197,7 +199,7 @@ router.post('/', cors(corsOptions), async (req, res, next) => {
    }
 });
 
-router.put('/edit/status', cors(corsOptions), async(req, res, next) => {
+router.put('/edit/status', apikeyPanelMiddleware, async(req, res, next) => {
    try{
        const {product_id, status} = req.body;
        const updateProduct = await Product.findByIdAndUpdate(product_id, {
@@ -215,7 +217,7 @@ router.put('/edit/status', cors(corsOptions), async(req, res, next) => {
    }
 });
 
-router.put('/edit/discount', cors(corsOptions), async(req, res, next) => {
+router.put('/edit/discount', apikeyPanelMiddleware, async(req, res, next) => {
    try{
        const {product_id, product_list_price, product_discount_price, product_discount} = req.body;
        const discountUpdate = await Product.findByIdAndUpdate(product_id, {
@@ -235,7 +237,7 @@ router.put('/edit/discount', cors(corsOptions), async(req, res, next) => {
    }
 });
 
-router.put('/edit', cors(corsOptions), async(req, res, next) => {
+router.put('/edit', apikeyPanelMiddleware, async(req, res, next) => {
    try{
        const {sub_category_id, product_id, product_name, category_id, brand_id, product_unit_type, product_unit_weight,product_amonut} = req.body;
        const update = await Product.findByIdAndUpdate(product_id, {
@@ -259,7 +261,7 @@ router.put('/edit', cors(corsOptions), async(req, res, next) => {
    }
 });
 
-router.put('/edit/image', cors(corsOptions), async(req, res, next) => {
+router.put('/edit/image', apikeyPanelMiddleware, async(req, res, next) => {
    try{
        const {imagename, product_id} = req.body;
        const image = await Product.findByIdAndUpdate(product_id, {
@@ -277,7 +279,7 @@ router.put('/edit/image', cors(corsOptions), async(req, res, next) => {
    }
 });
 
-router.delete('/:product_id', cors(corsOptions), async (req, res, next) => {
+router.delete('/:product_id', apikeyPanelMiddleware, async (req, res, next) => {
    try{
        const {product_id} = req.params;
        const deleteProduct = await Product.findByIdAndDelete(product_id);
@@ -293,7 +295,7 @@ router.delete('/:product_id', cors(corsOptions), async (req, res, next) => {
    }
 });
 
-router.get('/search/:branch_id/:query', async (req, res, next) => {
+router.get('/search/:branch_id/:query', bothMid, async (req, res, next) => {
     try{
         const {query, branch_id} = req.params;
         console.log(query)
@@ -313,7 +315,7 @@ router.get('/search/:branch_id/:query', async (req, res, next) => {
     }
 })
 
-router.get('/search/:branch_id/:category_id/:query', async (req, res, next) => {
+router.get('/search/:branch_id/:category_id/:query', bothMid, async (req, res, next) => {
     try{
         const {category_id, query, branch_id} = req.params;
         const result = await Product.find({branch_id:branch_id, category_id:category_id, "product_name": new RegExp(query, "gi")});
@@ -330,7 +332,7 @@ router.get('/search/:branch_id/:category_id/:query', async (req, res, next) => {
     }
 })
 
-router.get('/sub/:sub_category_id', async (req, res, next) => {
+router.get('/sub/:sub_category_id', bothMid, async (req, res, next) => {
     try{
         const {sub_category_id} = req.params;
 

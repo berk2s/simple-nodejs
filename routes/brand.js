@@ -14,8 +14,9 @@ var corsOptions = {
     origin: PANEL_URL,
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
+const apikeyPanelMiddleware = require('../middleware/apikeypanel')
 
-router.get('/', cors(corsOptions), async (req, res, next) => {
+router.get('/', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const result = await Brand.find({});
         res.json({
@@ -36,7 +37,7 @@ router.get('/', cors(corsOptions), async (req, res, next) => {
     }
 });
 
-router.get('/:branch_id', cors(corsOptions), async (req, res, next) => {
+router.get('/:branch_id', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {branch_id} = req.params;
         const result = await Brand.aggregate([
@@ -104,7 +105,7 @@ router.get('/:branch_id', cors(corsOptions), async (req, res, next) => {
     }
 });
 
-router.get('/get/:brand_id', cors(corsOptions), async (req, res, next) => {
+router.get('/get/:brand_id', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {brand_id} = req.params;
         const result = await Brand.aggregate([
@@ -172,7 +173,7 @@ router.get('/get/:brand_id', cors(corsOptions), async (req, res, next) => {
     }
 })
 
-router.post('/', cors(corsOptions), async(req, res, next) => {
+router.post('/', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const {branch_id, brand_name} = req.body;
         const brand = new Brand({
@@ -198,7 +199,7 @@ router.post('/', cors(corsOptions), async(req, res, next) => {
     }
 });
 
-router.put('/', cors(corsOptions), async(req, res, next) => {
+router.put('/', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         const {brand_id, brand_name, brand_category} = req.body;
         const brand = await Brand.findByIdAndUpdate(brand_id,{
@@ -217,7 +218,7 @@ router.put('/', cors(corsOptions), async(req, res, next) => {
     }
 })
 
-router.delete('/', cors(corsOptions), async(req, res, next) => {
+router.delete('/', apikeyPanelMiddleware, async(req, res, next) => {
     try{
         await Brand.deleteOne({_id: req.body.brand_id});
         await Product.updateMany({brand_id: req.body.brand_id}, {$set: {brand_id: null}});

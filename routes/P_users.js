@@ -21,9 +21,13 @@ const whitelist = [PANEL_URL]
 
 var corsOptions = {
     origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1 || !origin) {
+        console.log(typeof origin)
+        console.log(origin)
+        if (whitelist.indexOf(origin) !== -1) {
             callback(null, true)
-        } else {
+        } else if(typeof origin === 'undefined') {
+            callback(new Error('Not allowed by CORS'))
+        }else {
             callback(new Error('Not allowed by CORS'))
         }
     },
