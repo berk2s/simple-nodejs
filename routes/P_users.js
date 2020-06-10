@@ -20,13 +20,13 @@ var cors = require("cors");
 const whitelist = [PANEL_URL]
 
 var corsOptions = {
-    origin:  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
-        callback(null, true)
-    } else {
-        callback(new Error('Not allowed by CORS'))
-    }
-},
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1 || !origin) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    },
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
