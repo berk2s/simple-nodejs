@@ -9,7 +9,7 @@ const LogModel = new Schema({
     data:{
         type:{},
     },
-    user_id:String,
+    user_id:mongoose.Types.ObjectId,
     name_surname:String,
     created_at:{
         type:Date,

@@ -23,7 +23,7 @@ var corsOptions = {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Expressasd' });
+  res.redirect('https://www.mavideniste.com');
 });
 
 router.post('/resetpass', async (req, res, next) => {

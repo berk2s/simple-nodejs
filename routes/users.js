@@ -32,7 +32,7 @@ const bothMid = require('../middleware/bothmid')
 
 router.get('/', apikeyPanelMiddleware, async (req, res, next) => {
   try{
-      const data = await User.find({});
+      const data = await User.find({})
       res.json({
           data: data,
           status: {

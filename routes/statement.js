@@ -256,4 +256,143 @@ router.get('/totalorder/:branch_id', apikeyPanelMiddleware, async(req, res, next
     }
 })
 
+router.get('/weekly/:back/:branch', apikeyPanelMiddleware, async (req, res, next) => {
+    try{
+        const { branch } = req.params;
+
+        const moment = require('moment-timezone');
+
+        const startDate_TypeDate = new Date();
+        const finishDate_TypeDate= new Date();
+
+        startDate_TypeDate.setDate(new Date().getDate()-(7))
+        startDate_TypeDate.setHours(new Date().getHours()-(new Date().getHours()))
+
+        finishDate_TypeDate.setDate(new Date().getDate())
+
+        const { _d : startDate} = moment.tz(new Date(startDate_TypeDate), "Europe/Istanbul");
+
+        const { _d : finishDate} = moment.tz(finishDate_TypeDate, "Europe/Istanbul");
+
+        const result = await Order.find({
+            order_date:
+                {
+                    $gte:startDate, // >=
+                    $lte:finishDate // <=
+                },
+            order_status:3,
+            is_bluecurrier:false,
+            branch_id: branch
+        }).sort({order_date:-1});
+
+        const today = new Date();
+        const todayDay = parseInt(today.getDate());
+
+        const resultBudge = [0, 0, 0, 0, 0, 0, 0];
+
+        result.map(e => {
+            const orderDate = new Date(e.order_date);
+            const orderDateDay = parseInt(orderDate.getDate());
+            const orderPrice = parseFloat(e.price.value);
+
+            if ((todayDay - 0) == orderDateDay) {
+                resultBudge[6] = resultBudge[6] + (orderPrice);
+            }
+
+            if ((todayDay - 1) == orderDateDay) {
+                resultBudge[5] = resultBudge[5] + (orderPrice);
+            }
+
+            if ((todayDay - 2) == orderDateDay) {
+                resultBudge[4] = resultBudge[4] + (orderPrice);
+            }
+
+            if ((todayDay - 3) == orderDateDay) {
+                resultBudge[3] = resultBudge[3] + (orderPrice);
+            }
+
+            if ((todayDay - 4) == orderDateDay) {
+                resultBudge[2] = resultBudge[2] + (orderPrice);
+            }
+
+            if ((todayDay - 5) == orderDateDay) {
+                resultBudge[1] = resultBudge[1] + (orderPrice);
+            }
+
+            if ((todayDay - 6) == orderDateDay) {
+                resultBudge[0] = resultBudge[0] + (orderPrice);
+            }
+        });
+
+        res.json(resultBudge)
+
+    }catch (e) {
+        res.json(e);
+    }
+})
+
+
+router.get('/totalorder/:back/:branch_id', apikeyPanelMiddleware, async(req, res, next) => {
+    try{
+        const back = (req.params.back);
+        const moment = require('moment-timezone');
+
+        const startDate_TypeDate = new Date();
+        const finishDate_TypeDate= new Date();
+
+        startDate_TypeDate.setDate(new Date().getDate()-((back)))
+        startDate_TypeDate.setHours(new Date().getHours()-(new Date().getHours()))
+
+        finishDate_TypeDate.setDate(new Date().getDate())
+
+        const { _d : startDate} = moment.tz(new Date(startDate_TypeDate), "Europe/Istanbul");
+
+        const { _d : finishDate} = moment.tz(finishDate_TypeDate, "Europe/Istanbul");
+
+        const result = await Order.find({
+            order_date:
+                {
+                    $gte:startDate, // >=
+                    $lte:finishDate // <=
+                },
+            order_status:3,
+            is_bluecurrier:false,
+            branch_id:req.params.branch_id
+        }).sort({order_date:-1});
+
+        const today = new Date();
+        const todayDay = parseInt(today.getDate());
+
+        const resultBudge = new Array((back));
+
+        for(let k = 0 ; k < resultBudge.length; k++)
+            resultBudge[k] = 0;
+
+        const pro = result.map((e, i) => {
+            return new Promise((resolve, reject) => {
+                const today = new Date();
+
+                const day = today.getDay();
+                const month = today.getMonth();
+
+                const orderDate = new Date(e.order_date);
+                const orderDateDay = parseInt(orderDate.getDate());
+
+                resultBudge.push()
+
+                resolve({m:orderDate.getMonth(), d:orderDate.getDate()})
+
+            });
+        });
+
+            const they = await Promise.all(pro)
+
+        res.json({totalorder: result.length, result: they});
+    }catch(e){
+        res.json(e);
+    }
+})
+
+
+
 module.exports = router;
