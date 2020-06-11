@@ -88,7 +88,8 @@ router.get('/today', apikeyPanelMiddleware, async (req, res, next) => {
 router.get('/:user_id', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {user_id} = req.params;
-        const result = await Log.find({user_id:user_id}).sort({_id:-1});
+        console.log(mongoose.Types.ObjectId(user_id))
+        const result = await Log.find({user_id:mongoose.Types.ObjectId(user_id)});
         res.json({
             data:result
         });
@@ -101,7 +102,7 @@ router.get('/:user_id', apikeyPanelMiddleware, async (req, res, next) => {
 router.get('/length/:user_id', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {user_id} = req.params;
-        const result = await Log.find({user_id:user_id});
+        const result = await Log.find({user_id:mongoose.Types.ObjectId(user_id)});
         res.json({
             data:result.length
         });
@@ -120,7 +121,7 @@ router.post('/',  async (req, res, next) => {
         const log = new Log({
             data:data,
             name_surname: name_surname,
-            user_id: user_id,
+            user_id: mongoose.Types.ObjectId(user_id),
             created_at: dateTurkey._d,
         });
 
