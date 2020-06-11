@@ -97,6 +97,19 @@ router.get('/:user_id', apikeyPanelMiddleware, async (req, res, next) => {
     }
 });
 
+
+router.get('/length/:user_id', apikeyPanelMiddleware, async (req, res, next) => {
+    try{
+        const {user_id} = req.params;
+        const result = await Log.find({user_id:user_id});
+        res.json({
+            data:result.length
+        });
+    }catch(e){
+        res.json(e);
+    }
+});
+
 router.post('/',  async (req, res, next) => {
     try{
         const {data, name_surname, user_id} = req.body;
