@@ -11,13 +11,11 @@ const User = require('../Models/User');
 module.exports = async (jwtID, postID) => {
 
     try{
-        if(!mongoose.Types.ObjectId.isValid(jwtID))
-            return false;
 
         if(!mongoose.Types.ObjectId.isValid(postID))
             return false;
 
-        const user_JWT = await User.findOne({_id: jwtID});
+        const user_JWT = await User.findOne({phone_number: jwtID});
         const user_POST = await User.findOne({_id: postID});
 
         if(user_JWT == null)

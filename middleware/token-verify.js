@@ -44,7 +44,9 @@ module.exports =  async (req, res, next) => {
             }
         });
         const user_id = await idPromise
-        const _checkJWTID_ = await IDCHECKER(decoded.id, user_id)
+
+        const _checkJWTID_ = await IDCHECKER(decoded.phone_number, user_id)
+
         if(!_checkJWTID_) {
             await new LogRuntime({
                 data: `${decoded.id} ve ${decoded.phone_number} ile ${user_id}`,
@@ -53,7 +55,7 @@ module.exports =  async (req, res, next) => {
             console.log(req.app.get('API_KEY'))
             console.log(decoded.id)
             console.log(user_id)
-          //  next(new Error('invalid ids'))
+            next(new Error('invalid ids'))
             return false;
         }
 
