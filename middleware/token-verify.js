@@ -53,7 +53,7 @@ module.exports =  async (req, res, next) => {
             console.log(req.app.get('API_KEY'))
             console.log(decoded.id)
             console.log(user_id)
-            next(new Error('invalid ids'))
+          //  next(new Error('invalid ids'))
             return false;
         }
 
