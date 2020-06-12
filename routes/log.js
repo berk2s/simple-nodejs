@@ -89,7 +89,7 @@ router.get('/:user_id', apikeyPanelMiddleware, async (req, res, next) => {
     try{
         const {user_id} = req.params;
         console.log(mongoose.Types.ObjectId(user_id))
-        const result = await Log.find({user_id:mongoose.Types.ObjectId(user_id)});
+        const result = await Log.find({user_id:mongoose.Types.ObjectId(user_id)}).sort({_id:-1});
         res.json({
             data:result
         });
