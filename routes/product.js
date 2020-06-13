@@ -85,8 +85,30 @@ router.get('/:branch_id',  bothMid, async(req, res, next) => {
             }
         ]);
 
+        const randomizeArray = new Promise((resolve, reject) => {
+            let currentIndex = products.length, temporaryValue, randomIndex;
+
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
+
+                // Pick a remaining element...
+                let randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // And swap it with the current element.
+                let temporaryValue = products[currentIndex];
+                products[currentIndex] = products[randomIndex];
+                products[randomIndex] = temporaryValue;
+            }
+
+            resolve(products);
+        })
+
+        const mixResult = await randomizeArray
+
         res.json({
-            data: products,
+            dataLength: mixResult.length,
+            data: mixResult,
             status: {
                 state: true,
                 code: 'FP_1'

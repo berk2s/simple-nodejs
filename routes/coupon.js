@@ -322,11 +322,11 @@ router.post('/validate', tokenVerifyMiddleware, async (req, res, next) => {
            }
 
            let result;
-           if(coupon_price_type == 1){
+           if(coupon_price_type === 1){
                const totalPrice = parseFloat(total_price).toFixed(2);
                const discountPrice = (coupon_price_unit);
                result = totalPrice-discountPrice;
-           }else if(coupon_price_type == 2){
+           }else if(coupon_price_type === 2){
                const totalPrice = parseFloat(total_price).toFixed(2);
                const discountPercantage = (coupon_price_unit);
                const discountAmount = ((totalPrice*discountPercantage)/100);
