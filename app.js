@@ -41,7 +41,8 @@ app.use(cors());
 // mongoose connection
 const mongoose = require('./helper/db')();
 
-
+const robots = require('express-robots-txt')
+app.use(robots({UserAgent: '*', Disallow: '/'}))
 
 //api key
 app.set('API_KEY', API_KEY);
